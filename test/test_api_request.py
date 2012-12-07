@@ -35,7 +35,12 @@ class TestAPIRequest(unittest.TestCase):
         try:
             self.request._generate_nonce(nonce_length=0)
         except APIRequestError, e:
-            self.assertEquals(e.args[0], 'nonce string must be an int between 24 and 255 chars')
+            self.assertEquals(e.args[0], 'Nonce length must be an int between 24 and 255 chars')
+
+        try:
+            self.request._generate_nonce(nonce_length="character")
+        except APIRequestError, e:
+            self.assertEquals(e.args[0], 'Nonce length must be an int between 24 and 255 chars')
 
         nonce = self.request._generate_nonce(nonce_length=24)
         self.assertEquals(len(nonce), 24)
@@ -127,6 +132,10 @@ class TestAPIRequest(unittest.TestCase):
         request_params = {'image_url': 'CAPS%21%3f%3f%21%3f%21'}
         sorted_params = self.request._sort_params(request_params)
         self.assertEquals(sorted_params, 'image_url=caps%21%3f%3f%21%3f%21')
+
+        request_params = {'Image_Url': 'CAPS%21%3f%3f%21%3f%21'}
+        sorted_params = self.request._sort_params(request_params)
+        self.assertEquals(sorted_params, 'Image_Url=caps%21%3f%3f%21%3f%21')
 
     def test_request_url(self):
         """ Test APIRequest._request_url(). """

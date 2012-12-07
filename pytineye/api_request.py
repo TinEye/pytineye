@@ -8,14 +8,16 @@ Copyright (c) 2012 Idee Inc. All rights reserved worldwide.
 """
 
 import hmac
-import hashlib
 import mimetools
 import sys
 import time
 import urllib
 
+# Standard hashlib only available after Python 2.5 (inclusive)
 if sys.version_info < (2, 5):
     import sha
+else:
+    from hashlib import sha1 as sha
 
 from Crypto.Random import random
 from exceptions import APIRequestError
@@ -35,24 +37,26 @@ class APIRequest(object):
 
     def _generate_nonce(self, nonce_length=24):
         """
-        Generate a nonce.
+        Generate a nonce used to make a request unique.
 
         - `nonce_length`, length of the generated nonce.
 
         Returns: a nonce.
         """
-        if nonce_length < self.min_nonce_length or nonce_length > self.max_nonce_length \
-           or not str(nonce_length).isdigit():
-            raise APIRequestError("nonce string must be an int between %d and %d chars" % \
-                                            (self.min_nonce_length, self.max_nonce_length))
+        try:
+            int(nonce_length)
+            if nonce_length < APIRequest.min_nonce_length or nonce_length > APIRequest.max_nonce_length:
+                raise ValueError()
+        except ValueError, e:
+            raise APIRequestError("Nonce length must be an int between %d and %d chars" % \
+                (APIRequest.min_nonce_length, APIRequest.max_nonce_length))
 
         rand = random.StrongRandom()
 
         nonce = ""
-        for i in range(0, nonce_length):
-            nonce += self.nonce_allowable_chars[rand.randint(0, len(self.nonce_allowable_chars) - 1)]
+        nonce = [rand.choice(APIRequest.nonce_allowable_chars) for i in range(0, nonce_length)]
 
-        return nonce
+        return "".join(nonce)
 
     def _generate_get_hmac_signature(self, method, nonce, date, request_params={}):
         """
@@ -60,7 +64,7 @@ class APIRequest(object):
 
         - `method`, the API method being called.
         - `nonce`, a nonce.
-        - `date`, the date of the request.
+        - `date`, UNIX timestamp of the request.
         - `request_params`, dictionary of other search parameters.
 
         Returns: an HMAC signature hash.
@@ -80,7 +84,7 @@ class APIRequest(object):
         - `method`, the API method being called.
         - `boundary`, the HTTP request's boundary string.
         - `nonce`, a nonce.
-        - `date`, the date of the request.
+        - `date`, UNIX timestamp of the request.
         - `filename`, filename of the image being uploaded.
         - `request_params`, dictionary of other search parameters.
 
@@ -107,11 +111,7 @@ class APIRequest(object):
         """
 
         signature = ""
-		# Standard hashlib only available after Python 2.5
-        if sys.version_info >= (2, 5):
-            signature = hmac.new(self.private_key, to_sign, hashlib.sha1)
-        else:
-            signature = hmac.new(self.private_key, to_sign, sha)
+        signature = hmac.new(self.private_key, to_sign, sha)
 
         return signature.hexdigest()
 
@@ -130,17 +130,19 @@ class APIRequest(object):
         keys = []
         unsorted_params = {}
 
+        special_keys = ["api_key", "api_sig", "date", "nonce", "image_upload"]
         for key in request_params.keys():
+            lc_key = key.lower()
             # Sort the parameters if they are not part of the following list
-            if key.lower() not in ["api_key", "api_sig", "date", "nonce", "image_upload"]:
+            if lc_key not in special_keys:
                 # If the parameter is image_url, URL encode the image URL then lowercase it
-                if key.lower() == "image_url":
+                if lc_key == "image_url":
                     value = request_params[key]
                     if "%" not in value:
                         value = urllib.quote_plus(value, "~")
-                    unsorted_params[key.lower()] = value.lower()
+                    unsorted_params[lc_key] = value.lower()
                 else:
-                    unsorted_params[key.lower()] = request_params[key]
+                    unsorted_params[lc_key] = request_params[key]
                 keys.append(key)
 
         keys.sort()
@@ -148,7 +150,7 @@ class APIRequest(object):
 
         # Return a query string
         for key in keys: 
-            sorted_pairs.append("%s=%s" % (key, unsorted_params[key]))
+            sorted_pairs.append("%s=%s" % (key, unsorted_params[key.lower()]))
 
         return "&".join(sorted_pairs)
 
@@ -157,7 +159,9 @@ class APIRequest(object):
         Helper method to generate a URL to call given a method,
         a signature and parameters.
 
-        - `method`, the API call to be return.
+        - `method`, API method being called.
+        - `nonce`, a nonce.
+        - `date`, UNIX timestamp of the request.
         - `api_signature`, the signature to be included with the URL.
         - `request_params`, the parameters to be included with the URL.
 
@@ -191,7 +195,7 @@ class APIRequest(object):
 
         Returns: a URL to send the search request to including the search parameters.
         """
-        # Have to generate a nonce and date to use in generating a POST request signature
+        # Have to generate a nonce and date to use in generating a GET request signature
         nonce = self._generate_nonce()
         date = int(time.time())
 
@@ -216,7 +220,7 @@ class APIRequest(object):
         - `request_url`, the URL to send the search to.
         - `boundary`, the boundary to be used in the POST request.
         """
-        if filename is None or len(str(filename).strip()) == 0:
+        if filename is None or not len(str(filename).strip()):
             raise APIRequestError("Must specify an image to search for.")
 
         # Have to generate a boundary, nonce, and date to use in generating a POST request signature
