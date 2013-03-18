@@ -35,4 +35,4 @@ View `documentation <https://api.tineye.com/python/docs/>`_.
 Support
 -------
 
-Please send comments, recommendations, or bugs reports to support@tineye.com.
+Please send comments, recommendations, and bug reports to support@tineye.com.
