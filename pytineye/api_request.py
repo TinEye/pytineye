@@ -71,7 +71,7 @@ class APIRequest(object):
         """
         http_verb = "GET"
 
-        param_str = self._sort_params(request_params)
+        param_str = self._sort_params(request_params=request_params)
         request_url = '%s%s/' % (self.api_url, method)
         to_sign = self.private_key + http_verb + str(date) + nonce + request_url + param_str
 
@@ -94,7 +94,7 @@ class APIRequest(object):
         http_verb = "POST"
         content_type = "multipart/form-data; boundary=%s" % boundary
 
-        param_str = self._sort_params(request_params)
+        param_str = self._sort_params(request_params=request_params)
         request_url = '%s%s/' % (self.api_url, method)
         to_sign = self.private_key + http_verb + content_type + urllib.quote_plus(filename).lower() + \
                   str(date) + nonce + request_url + param_str
@@ -115,7 +115,7 @@ class APIRequest(object):
 
         return signature.hexdigest()
 
-    def _sort_params(self, request_params):
+    def _sort_params(self, request_params, lowercase=True):
         """
         Helper method to sort request parameters.
         If request_params has the image_url parameter it is URL
@@ -140,7 +140,10 @@ class APIRequest(object):
                     value = request_params[key]
                     if "%" not in value:
                         value = urllib.quote_plus(value, "~")
-                    unsorted_params[lc_key] = value.lower()
+                    unsorted_params[lc_key] = value
+                    if lowercase:
+                        unsorted_params[lc_key] = value.lower()
+
                 else:
                     unsorted_params[lc_key] = request_params[key]
                 keys.append(key)
@@ -179,7 +182,7 @@ class APIRequest(object):
                                      api_signature)
 
         # Need to sort all other parameters
-        extra_params = self._sort_params(request_params)
+        extra_params = self._sort_params(request_params=request_params, lowercase=False)
 
         if extra_params != "":
             request_url += "&" + extra_params
