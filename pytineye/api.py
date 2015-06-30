@@ -25,8 +25,9 @@ class TinEyeResponse(object):
     - `matches`, a list of Match objects.
     """
 
-    def __init__(self, matches):
+    def __init__(self, matches, total_results=None):
         self.matches = matches
+        self.total_results = total_results or 0
 
     def __repr__(self):
         return '%s(matches="%s")' % \
@@ -53,7 +54,8 @@ class TinEyeResponse(object):
                 for m in results.get('matches'):
                     match = Match._from_dict(m)
                     matches.append(match)
-        return TinEyeResponse(matches)
+        total_results = results.get('total_results')
+        return TinEyeResponse(matches, total_results)
 
 class Match(object):
     """
