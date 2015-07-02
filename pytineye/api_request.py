@@ -50,7 +50,7 @@ class APIRequest(object):
             int(nonce_length)
             if nonce_length < APIRequest.min_nonce_length or nonce_length > APIRequest.max_nonce_length:
                 raise ValueError()
-        except ValueError as e:
+        except ValueError:
             raise APIRequestError(
                 "Nonce length must be an int between %d and %d chars" %
                 (APIRequest.min_nonce_length, APIRequest.max_nonce_length))

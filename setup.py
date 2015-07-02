@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.2'
+version = '1.0'
 
 setup(name='pytineye',
       version=version,
@@ -12,7 +12,7 @@ setup(name='pytineye',
       keywords='reverse image search',
       author='Id\xc3\xa9e Inc.',
       author_email='support@tineye.com',
-      url='http://api.tineye.com/',
+      url='https://api.tineye.com/',
       license='MIT License',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
