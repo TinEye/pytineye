@@ -26,6 +26,7 @@ class TinEyeResponse(object):
     Attributes:
 
     - `matches`, a list of Match objects.
+    - `total_results`, total number of results.
     """
 
     def __init__(self, matches, total_results=None):
@@ -185,7 +186,7 @@ class TinEyeAPIRequest(object):
 
     Searching for an image using an image URL:
 
-        >>> api.search_url(url='http://www.tineye.com/images/meloncat.jpg')
+        >>> api.search_url(url='http://tineye.com/images/meloncat.jpg')
         TinEyeResponse(...)
 
     Searching for an image using image data:
@@ -210,7 +211,7 @@ class TinEyeAPIRequest(object):
 
     """
 
-    def __init__(self, api_url='http://api.tineye.com/rest/', public_key=None, private_key=None):
+    def __init__(self, api_url='https://api.tineye.com/rest/', public_key=None, private_key=None):
         self.http = urllib3.connection_from_url(api_url)
         self.request = APIRequest(api_url, public_key, private_key)
 
