@@ -13,11 +13,15 @@ from pytineye.api import Backlink, Match, TinEyeResponse
 from pytineye.api import TinEyeAPIRequest
 from pytineye.exceptions import TinEyeAPIError
 
+
 class TestTinEyeAPIRequest(unittest.TestCase):
     """ Test TinEyeAPIRequest class. """
-    
+
     def setUp(self):
-        self.api = TinEyeAPIRequest(api_url='http://api.tineye.com/sandbox/', public_key='LCkn,2K7osVwkX95K4Oy', private_key='6mm60lsCNIB,FwOWjJqA80QZHh9BMwc-ber4u=t^')
+        self.api = TinEyeAPIRequest(
+            api_url='https://api.tineye.com/',
+            public_key='LCkn,2K7osVwkX95K4Oy',
+            private_key='6mm60lsCNIB,FwOWjJqA80QZHh9BMwc-ber4u=t^')
 
     def tearDown(self):
         pass
@@ -27,7 +31,9 @@ class TestTinEyeAPIRequest(unittest.TestCase):
 
         backlink = {'url': 'url', 'crawl_date': '2010-02-19', 'backlink': 'backlink'}
         b = Backlink._from_dict(backlink)
-        self.assertEquals(repr(b), 'Backlink(url="url", backlink=backlink, crawl_date=2010-02-19 00:00:00)')
+        self.assertEquals(
+            repr(b),
+            'Backlink(url="url", backlink=backlink, crawl_date=2010-02-19 00:00:00)')
         self.assertEquals(b.url, 'url')
         self.assertEquals(b.crawl_date, datetime(2010, 2, 19, 0, 0))
         self.assertEquals(b.backlink, 'backlink')
@@ -53,10 +59,11 @@ class TestTinEyeAPIRequest(unittest.TestCase):
     def test_match(self):
         """ Test TinEyeAPI.Match object. """
 
-        match = {'backlinks': [{'url': 'url', 'crawl_date': '2008-04-27', 'backlink': 'backlink'}], 
-                 'format': 'JPEG', 'overlay': 'overlay', 'height': 297, 'width': 350,
-                 'image_url': 'image_url', 'filesize': 87918, 'contributor': False,
-                 'size': 103950, 'query_hash': 'dca08fc6b2ec4b9e04f94a4e29223f6af3dd6555'}
+        match = {
+            'backlinks': [{'url': 'url', 'crawl_date': '2008-04-27', 'backlink': 'backlink'}],
+            'format': 'JPEG', 'overlay': 'overlay', 'height': 297, 'width': 350,
+            'image_url': 'image_url', 'filesize': 87918, 'contributor': False,
+            'size': 103950, 'query_hash': 'dca08fc6b2ec4b9e04f94a4e29223f6af3dd6555'}
         m = Match._from_dict(match)
         self.assertEquals(repr(m), 'Match(image_url="image_url", width=350, height=297)')
         self.assertEquals(len(m.backlinks), 1)
@@ -69,11 +76,13 @@ class TestTinEyeAPIRequest(unittest.TestCase):
         self.assertEquals(m.contributor, False)
         self.assertEquals(m.size, 103950)
 
-        match = {'backlinks': [{'url': 'url', 'crawl_date': '2008-04-27', 'backlink': 'backlink'},
-                               {'url': 'url', 'crawl_date': '2009-04-27', 'backlink': 'backlink'}], 
-                 'format': 'JPEG', 'overlay': 'overlay', 'height': 297, 'width': 350,
-                 'image_url': 'image_url', 'filesize': 87918, 'contributor': True,
-                 'size': 103950}
+        match = {
+            'backlinks': [
+                {'url': 'url', 'crawl_date': '2008-04-27', 'backlink': 'backlink'},
+                {'url': 'url', 'crawl_date': '2009-04-27', 'backlink': 'backlink'}],
+            'format': 'JPEG', 'overlay': 'overlay', 'height': 297, 'width': 350,
+            'image_url': 'image_url', 'filesize': 87918, 'contributor': True,
+            'size': 103950}
         m = Match._from_dict(match)
         self.assertEquals(len(m.backlinks), 2)
         self.assertEquals(m.format, 'JPEG')
@@ -85,10 +94,11 @@ class TestTinEyeAPIRequest(unittest.TestCase):
         self.assertEquals(m.contributor, True)
         self.assertEquals(m.size, 103950)
 
-        match = {'backlinks': [], 
-                 'format': '', 'overlay': '',
-                 'image_url': 'image_url', 'filesize': 87918, 'contributor': True,
-                 'size': 103950}
+        match = {
+            'backlinks': [],
+            'format': '', 'overlay': '',
+            'image_url': 'image_url', 'filesize': 87918, 'contributor': True,
+            'size': 103950}
         m = Match._from_dict(match)
         self.assertEquals(len(m.backlinks), 0)
         self.assertEquals(m.format, '')
@@ -103,18 +113,59 @@ class TestTinEyeAPIRequest(unittest.TestCase):
     def test_tineye_response(self):
         """ Test TinEyeAPI.TinEyeResponse object. """
 
-        matches = {'results': {'matches': [{'backlinks': [], 'format': '', 'overlay': '', 'height': 297, 'width': 350,
-                                            'image_url': '', 'filesize': 87918, 'contributor': True, 'size': 103950}]}}
+        matches = {
+            'results': {
+                'matches': [
+                    {
+                        'backlinks': [],
+                        'format': '',
+                        'overlay': '',
+                        'height': 297,
+                        'width': 350,
+                        'image_url': '',
+                        'filesize': 87918,
+                        'contributor': True,
+                        'size': 103950
+                    }
+                ]
+            }
+        }
         r = TinEyeResponse._from_dict(matches)
-        self.assertEquals(repr(r), 'TinEyeResponse(matches="[Match(image_url="", width=350, height=297)]")')
+        self.assertEquals(
+            repr(r),
+            'TinEyeResponse(matches="[Match(image_url="", width=350, height=297)]", total_results=0)'),
         self.assertEquals(len(r.matches), 1)
         self.assertEquals(r.matches[0].height, 297)
         self.assertEquals(r.matches[0].width, 350)
 
-        matches = {'results': {'matches': [{'backlinks': [], 'format': '', 'overlay': '', 'height': 297, 'width': 350,
-                                            'image_url': '', 'filesize': 87918, 'contributor': True, 'size': 103950},
-                                           {'backlinks': [], 'format': '', 'overlay': '', 'height': 200, 'width': 300,
-                                            'image_url': '', 'filesize': 87918, 'contributor': True, 'size': 103950}]}}
+        matches = {
+            'results': {
+                'matches': [
+                    {
+                        'backlinks': [],
+                        'format': '',
+                        'overlay': '',
+                        'height': 297,
+                        'width': 350,
+                        'image_url': '',
+                        'filesize': 87918,
+                        'contributor': True,
+                        'size': 103950
+                    },
+                    {
+                        'backlinks': [],
+                        'format': '',
+                        'overlay': '',
+                        'height': 200,
+                        'width': 300,
+                        'image_url': '',
+                        'filesize': 87918,
+                        'contributor': True,
+                        'size': 103950
+                    }
+                ]
+            }
+        }
         r = TinEyeResponse._from_dict(matches)
         self.assertEquals(len(r.matches), 2)
         self.assertEquals(r.matches[1].height, 200)
@@ -148,11 +199,13 @@ class TestTinEyeAPIRequest(unittest.TestCase):
 
         try:
             r = self.api.image_count()
+            assert False
         except TinEyeAPIError, e:
             assert True
 
     def test_total_results_in_response(self):
-        """Test if TinEyeAPI.TinEyeResponse have total_results object."""
+        """ Test if TinEyeAPI.TinEyeResponse contains total_results. """
+
         response = {
             'results': {'total_results': 123, 'matches': []}
         }

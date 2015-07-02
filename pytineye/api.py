@@ -30,8 +30,8 @@ class TinEyeResponse(object):
         self.total_results = total_results or 0
 
     def __repr__(self):
-        return '%s(matches="%s")' % \
-               (self.__class__.__name__, self.matches)
+        return '%s(matches="%s", total_results=%s)' % \
+            (self.__class__.__name__, self.matches, self.total_results)
 
     @staticmethod
     def _from_dict(result_json):
@@ -55,7 +55,8 @@ class TinEyeResponse(object):
                     match = Match._from_dict(m)
                     matches.append(match)
         total_results = results.get('total_results')
-        return TinEyeResponse(matches, total_results)
+
+        return TinEyeResponse(matches=matches, total_results=total_results)
 
 class Match(object):
     """
