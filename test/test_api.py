@@ -19,7 +19,7 @@ class TestTinEyeAPIRequest(unittest.TestCase):
 
     def setUp(self):
         self.api = TinEyeAPIRequest(
-            api_url='https://api.tineye.com/',
+            api_url='https://api.tineye.com/rest/',
             public_key='LCkn,2K7osVwkX95K4Oy',
             private_key='6mm60lsCNIB,FwOWjJqA80QZHh9BMwc-ber4u=t^')
 
@@ -199,7 +199,6 @@ class TestTinEyeAPIRequest(unittest.TestCase):
 
         try:
             r = self.api.image_count()
-            assert False
         except TinEyeAPIError, e:
             assert True
 
