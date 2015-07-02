@@ -150,3 +150,11 @@ class TestTinEyeAPIRequest(unittest.TestCase):
             r = self.api.image_count()
         except TinEyeAPIError, e:
             assert True
+
+    def test_total_results_in_response(self):
+        """Test if TinEyeAPI.TinEyeResponse have total_results object."""
+        response = {
+            'results': {'total_results': 123, 'matches': []}
+        }
+        r = TinEyeResponse._from_dict(response)
+        self.assertEqual(r.total_results, 123)
