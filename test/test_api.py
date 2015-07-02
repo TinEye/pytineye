@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
+
 """
 test_api_request.py
 
 Test TinEyeAPIRequest class.
 
-Copyright (c) 2012 Idee Inc. All rights reserved worldwide.
+Copyright (c) 2015 Idée Inc. All rights reserved worldwide.
 """
 
 from datetime import datetime
@@ -11,7 +13,6 @@ import unittest
 
 from pytineye.api import Backlink, Match, TinEyeResponse
 from pytineye.api import TinEyeAPIRequest
-from pytineye.exceptions import TinEyeAPIError
 
 
 class TestTinEyeAPIRequest(unittest.TestCase):
@@ -176,31 +177,41 @@ class TestTinEyeAPIRequest(unittest.TestCase):
         self.assertEquals(len(r.matches), 0)
 
     def test_calls(self):
-        """ TODO: Update this test when we have a fake API. """
+        """ Test methods with API sandbox. """
 
-        try:
-            r = self.api.search_url('http://www.tineye.com/images/meloncat.jpg')
-        except TinEyeAPIError, e:
-            assert True
+        # Test search_url with sandbox
+        response = self.api.search_url('http://www.tineye.com/images/meloncat.jpg')
+        self.assertEqual(len(response.matches), 100)
+        self.assertTrue(response.total_results > 1000)
 
-        try:
-            filename = "test/images/meloncat.jpg"
-            data = ""
-            with open(filename, 'rb') as fp:
-                data = fp.read()
-            r = self.api.search_data(data, 'meloncat.jpg')
-        except TinEyeAPIError, e:
-            assert True
+        response = self.api.search_url('http://www.tineye.com/images/meloncat.jpg', limit=10)
+        self.assertEqual(len(response.matches), 10)
+        self.assertTrue(response.total_results > 1000)
 
-        try:
-            r = self.api.remaining_searches()
-        except TinEyeAPIError, e:
-            assert True
+        # Test search_data with sandbox
+        filename = "test/images/meloncat.jpg"
+        data = ""
+        with open(filename, 'rb') as fp:
+            data = fp.read()
+        response = self.api.search_data(data)
+        self.assertEqual(len(response.matches), 100)
+        self.assertTrue(response.total_results > 1000)
 
-        try:
-            r = self.api.image_count()
-        except TinEyeAPIError, e:
-            assert True
+        response = self.api.search_data(data, limit=10)
+        self.assertEqual(len(response.matches), 10)
+        self.assertTrue(response.total_results > 1000)
+
+        # Test remaining_searches with sandbox
+        remaining_searches = self.api.remaining_searches()
+        self.assertEqual(remaining_searches['remaining_searches'], 5000)
+        self.assertTrue('start_date' in remaining_searches)
+        self.assertTrue('expire_date' in remaining_searches)
+        self.assertTrue(isinstance(remaining_searches['start_date'], datetime))
+        self.assertTrue(isinstance(remaining_searches['expire_date'], datetime))
+
+        # Test image_count with sandbox
+        image_count = self.api.image_count()
+        self.assertTrue(image_count > 10000000000)
 
     def test_total_results_in_response(self):
         """ Test if TinEyeAPI.TinEyeResponse contains total_results. """
