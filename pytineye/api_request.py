@@ -1,10 +1,12 @@
+# -*- coding: utf-8 -*-
+
 """
 api_request.py
 
 Provides authentication with the TinEye API server.
-For more information see https://api.tineye.com/documentation/authentication
+For more information see https://services.tineye.com/developers/tineyeapi/authentication.html
 
-Copyright (c) 2012 Idee Inc. All rights reserved worldwide.
+Copyright (c) 2015 Idée Inc. All rights reserved worldwide.
 """
 
 import hmac
@@ -21,6 +23,7 @@ else:
 
 from Crypto.Random import random
 from exceptions import APIRequestError
+
 
 class APIRequest(object):
     """ Class providing authentication with the TinEye API server. """
@@ -47,8 +50,9 @@ class APIRequest(object):
             int(nonce_length)
             if nonce_length < APIRequest.min_nonce_length or nonce_length > APIRequest.max_nonce_length:
                 raise ValueError()
-        except ValueError, e:
-            raise APIRequestError("Nonce length must be an int between %d and %d chars" % \
+        except ValueError as e:
+            raise APIRequestError(
+                "Nonce length must be an int between %d and %d chars" %
                 (APIRequest.min_nonce_length, APIRequest.max_nonce_length))
 
         rand = random.StrongRandom()
@@ -77,7 +81,8 @@ class APIRequest(object):
 
         return self._generate_hmac_signature(to_sign)
 
-    def _generate_post_hmac_signature(self, method, boundary, nonce, date, filename, request_params={}):
+    def _generate_post_hmac_signature(
+            self, method, boundary, nonce, date, filename, request_params={}):
         """
         Generate the HMAC signature hash for a POST request.
 
@@ -96,8 +101,9 @@ class APIRequest(object):
 
         param_str = self._sort_params(request_params=request_params)
         request_url = '%s%s/' % (self.api_url, method)
-        to_sign = self.private_key + http_verb + content_type + urllib.quote_plus(filename).lower() + \
-                  str(date) + nonce + request_url + param_str
+        to_sign = self.private_key + http_verb + content_type + \
+            urllib.quote_plus(filename).lower() + \
+            str(date) + nonce + request_url + param_str
 
         return self._generate_hmac_signature(to_sign)
 
@@ -152,7 +158,7 @@ class APIRequest(object):
         sorted_pairs = []
 
         # Return a query string
-        for key in keys: 
+        for key in keys:
             sorted_pairs.append("%s=%s" % (key, unsorted_params[key.lower()]))
 
         return "&".join(sorted_pairs)
@@ -226,12 +232,14 @@ class APIRequest(object):
         if filename is None or not len(str(filename).strip()):
             raise APIRequestError("Must specify an image to search for.")
 
-        # Have to generate a boundary, nonce, and date to use in generating a POST request signature
+        # Have to generate a boundary, nonce, and date to use in generating a POST
+        # request signature
         boundary = mimetools.choose_boundary()
         nonce = self._generate_nonce()
         date = int(time.time())
 
-        api_signature = self._generate_post_hmac_signature("search", boundary, nonce, date, filename,
-                                                           request_params=request_params)
+        api_signature = self._generate_post_hmac_signature(
+            "search", boundary, nonce, date, filename,
+            request_params=request_params)
 
         return self._request_url(method, nonce, date, api_signature, request_params), boundary

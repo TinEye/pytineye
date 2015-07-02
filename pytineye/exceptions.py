@@ -1,10 +1,13 @@
+# -*- coding: utf-8 -*-
+
 """
 exceptions.py
 
 Exception class for pytineye.
 
-Copyright (c) 2012 Idee Inc. All rights reserved worldwide.
+Copyright (c) 2015 Idée Inc. All rights reserved worldwide.
 """
+
 
 class TinEyeAPIError(Exception):
     """ Base exception. """
@@ -19,6 +22,7 @@ class TinEyeAPIError(Exception):
         return """APIError:
                    code    = %s
                    message = %s""" % (self.code, self.message)
+
 
 class APIRequestError(Exception):
     """ Base exception for APIRequest. """

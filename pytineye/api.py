@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
+
 """
 api.py
 
 Python library to ease communication with the TinEye API server.
 
-Copyright (c) 2012 Idee Inc. All rights reserved worldwide.
+Copyright (c) 2015 Idée Inc. All rights reserved worldwide.
 """
 
 from datetime import datetime
@@ -15,6 +17,7 @@ from api_request import APIRequest
 from exceptions import TinEyeAPIError
 
 import urllib3
+
 
 class TinEyeResponse(object):
     """
@@ -57,6 +60,7 @@ class TinEyeResponse(object):
         total_results = results.get('total_results')
 
         return TinEyeResponse(matches=matches, total_results=total_results)
+
 
 class Match(object):
     """
@@ -110,16 +114,18 @@ class Match(object):
         if 'backlinks' in match_json:
             for b in match_json['backlinks']:
                 backlinks.append(Backlink._from_dict(b))
-        match = Match(image_url=match_json.get('image_url'),
-                      width=match_json.get('width'),
-                      height=match_json.get('height'),
-                      size=match_json.get('size'),
-                      format=match_json.get('format'),
-                      filesize=match_json.get('filesize'),
-                      overlay=match_json.get('overlay'),
-                      contributor=match_json.get('contributor'),
-                      backlinks=backlinks)
+        match = Match(
+            image_url=match_json.get('image_url'),
+            width=match_json.get('width'),
+            height=match_json.get('height'),
+            size=match_json.get('size'),
+            format=match_json.get('format'),
+            filesize=match_json.get('filesize'),
+            overlay=match_json.get('overlay'),
+            contributor=match_json.get('contributor'),
+            backlinks=backlinks)
         return match
+
 
 class Backlink(object):
     """
@@ -159,16 +165,23 @@ class Backlink(object):
         if backlink_json.get('crawl_date'):
             crawl_date = time.strptime(backlink_json.get('crawl_date'), '%Y-%m-%d')
             crawl_date = datetime(*crawl_date[:6])
-        return Backlink(url=backlink_json.get('url'), backlink=backlink_json.get('backlink'), crawl_date=crawl_date)
+        return Backlink(
+            url=backlink_json.get('url'),
+            backlink=backlink_json.get('backlink'),
+            crawl_date=crawl_date)
+
 
 class TinEyeAPIRequest(object):
     """
-    Class to ease communication with the TinEye API server. 
+    Class to ease communication with the TinEye API server.
 
     Establish a connection to the API:
 
         >>> from pytineye import TinEyeAPIRequest
-        >>> api = TinEyeAPIRequest('http://api.tineye.com/rest/', 'your_public_key', 'your_private_key')
+        >>> api = TinEyeAPIRequest(
+        ...     'https://api.tineye.com/rest/',
+        ...     'your_public_key',
+        ...     'your_private_key')
 
     Searching for an image using an image URL:
 
@@ -222,15 +235,16 @@ class TinEyeAPIRequest(object):
             response = None
 
             # If an image file was provided, send a POST request, else send a GET request
-            if image_file == None:
+            if image_file is None:
                 request_string = self.request.get_request(method, params)
                 response = self.http.request('GET', request_string)
             else:
                 filename = image_file[0]
                 request_string, boundary = self.request.post_request(method, filename, params)
-                response = self.http.request_encode_body('POST', request_string, 
-                                                         fields={'image_upload': image_file},
-                                                         multipart_boundary=boundary)
+                response = self.http.request_encode_body(
+                    'POST', request_string,
+                    fields={'image_upload': image_file},
+                    multipart_boundary=boundary)
             # Parse the JSON into a Python object
             obj = simplejson.loads(response.data)
 
@@ -245,15 +259,16 @@ class TinEyeAPIRequest(object):
 
         return obj
 
-    def search_url(self, url, offset=0, limit=100, sort='score', 
-                   order='desc', **kwargs):
+    def search_url(
+            self, url, offset=0, limit=100, sort='score',
+            order='desc', **kwargs):
         """
         Perform searches on the TinEye index using an image URL.
 
         - `url`, the URL of the image that will be searched for, must be urlencoded.
         - `offset`, offset of results from the start, defaults to 0.
         - `limit`, number of results to return, defaults to 100.
-        - `sort`, sort results by score, file size (size), or crawl date (crawl_date), 
+        - `sort`, sort results by score, file size (size), or crawl date (crawl_date),
           defaults to descending (desc).
         - `order`, sort results by ascending (asc) or descending criteria.
         - `kwargs`, to pass extra arguments intended for debugging.
@@ -261,18 +276,20 @@ class TinEyeAPIRequest(object):
         Returns: a TinEye Response object.
         """
 
-        params = {'image_url': url,
-                  'offset': offset,
-                  'limit': limit,
-                  'sort': sort,
-                  'order': order}
+        params = {
+            'image_url': url,
+            'offset': offset,
+            'limit': limit,
+            'sort': sort,
+            'order': order}
 
         obj = self._request('search', params, **kwargs)
 
         return TinEyeResponse._from_dict(obj)
 
-    def search_data(self, data, offset=0, limit=100,
-                    sort='score', order='desc', **kwargs):
+    def search_data(
+            self, data, offset=0, limit=100,
+            sort='score', order='desc', **kwargs):
         """
         Perform searches on the TinEye index using image data.
 
@@ -287,10 +304,11 @@ class TinEyeAPIRequest(object):
         Returns: a TinEye Response object.
         """
 
-        params = {'offset': offset,
-                  'limit': limit,
-                  'sort': sort,
-                  'order': order}
+        params = {
+            'offset': offset,
+            'limit': limit,
+            'sort': sort,
+            'order': order}
 
         image_file = ("image.jpg", data)
         obj = self._request('search', params=params, image_file=image_file, **kwargs)
