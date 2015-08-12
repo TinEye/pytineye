@@ -37,12 +37,12 @@ class TestAPIRequest(unittest.TestCase):
 
         try:
             self.request._generate_nonce(nonce_length=0)
-        except APIRequestError, e:
+        except APIRequestError as e:
             self.assertEquals(e.args[0], 'Nonce length must be an int between 24 and 255 chars')
 
         try:
             self.request._generate_nonce(nonce_length="character")
-        except APIRequestError, e:
+        except APIRequestError as e:
             self.assertEquals(e.args[0], 'Nonce length must be an int between 24 and 255 chars')
 
         nonce = self.request._generate_nonce(nonce_length=24)

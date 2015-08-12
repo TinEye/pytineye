@@ -180,7 +180,7 @@ class TestTinEyeAPIRequest(unittest.TestCase):
         """ Test methods with API sandbox. """
 
         # Test search_url with sandbox
-        response = self.api.search_url('http://www.tineye.com/images/meloncat.jpg')
+        response = self.api.search_url(b'http://www.tineye.com/images/meloncat.jpg')
         self.assertEqual(len(response.matches), 100)
         self.assertTrue(response.total_results > 1000)
 
