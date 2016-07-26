@@ -5,7 +5,7 @@ test_api_request.py
 
 Test APIRequest class.
 
-Copyright (c) 2015 Idée Inc. All rights reserved worldwide.
+Copyright (c) 2016 TinEye. All rights reserved worldwide.
 """
 
 import unittest

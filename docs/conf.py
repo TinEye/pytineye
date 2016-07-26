@@ -39,7 +39,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'TinEye Commercial API library'
-copyright = u'%d, Idée Inc' % datetime.now().year
+copyright = u'%d, TinEye' % datetime.now().year
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -174,7 +174,7 @@ htmlhelp_basename = 'TinEyeCommercialAPIdoc'
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'TinEyeCommercialAPI.tex', u'TinEye Commercial API Documentation',
-   u'Idée Inc.', 'manual'),
+   u'TinEye', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

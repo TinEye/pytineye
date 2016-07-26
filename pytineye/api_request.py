@@ -6,20 +6,18 @@ api_request.py
 Provides authentication with the TinEye API server.
 For more information see https://services.tineye.com/developers/tineyeapi/authentication.html
 
-Copyright (c) 2015 Idée Inc. All rights reserved worldwide.
+Copyright (c) 2016 TinEye. All rights reserved worldwide.
 """
+
+from future.standard_library import install_aliases
+install_aliases()
 
 import hmac
 import email.generator
-import sys
 import time
-import urllib.request, urllib.parse, urllib.error
+import urllib.parse
 
-# Standard hashlib only available after Python 2.5 (inclusive)
-if sys.version_info < (2, 5):
-    import sha
-else:
-    from hashlib import sha1 as sha
+from hashlib import sha1 as sha
 
 from Crypto.Random import random
 from .exceptions import APIRequestError
@@ -48,7 +46,8 @@ class APIRequest(object):
         """
         try:
             int(nonce_length)
-            if nonce_length < APIRequest.min_nonce_length or nonce_length > APIRequest.max_nonce_length:
+            if nonce_length < APIRequest.min_nonce_length or \
+                    nonce_length > APIRequest.max_nonce_length:
                 raise ValueError()
         except ValueError:
             raise APIRequestError(
@@ -183,11 +182,12 @@ class APIRequest(object):
 
         request_url = "%s?api_key=%s&date=%s&nonce=%s&api_sig=%s"
 
-        request_url = request_url % (base_url,
-                                     self.public_key,
-                                     str(date),
-                                     nonce,
-                                     api_signature)
+        request_url = request_url % (
+            base_url,
+            self.public_key,
+            str(date),
+            nonce,
+            api_signature)
 
         # Need to sort all other parameters
         extra_params = self._sort_params(request_params=request_params, lowercase=False)

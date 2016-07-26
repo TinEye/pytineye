@@ -1,10 +1,17 @@
 Changelog
 =========
 
+1.1
+---
+
+* Added Python 3 support
+* Replaced `simplejson` with `json`
+
+
 1.0
 ---
 
-* Added total_results to TinEyeResponse
+* Added `total_results` to TinEyeResponse
 
 
 0.1

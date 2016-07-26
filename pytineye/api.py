@@ -5,12 +5,12 @@ api.py
 
 Python library to ease communication with the TinEye API server.
 
-Copyright (c) 2015 Idée Inc. All rights reserved worldwide.
+Copyright (c) 2016 TinEye. All rights reserved worldwide.
 """
 
 from datetime import datetime
 import http.client
-import simplejson
+import json
 import time
 
 from .api_request import APIRequest
@@ -247,9 +247,9 @@ class TinEyeAPIRequest(object):
                     fields={'image_upload': image_file},
                     multipart_boundary=boundary)
             # Parse the JSON into a Python object
-            obj = simplejson.loads(response.data)
+            obj = json.loads(response.data.decode('utf-8'))
 
-        except simplejson.decoder.JSONDecodeError as e:
+        except ValueError as e:
             raise TinEyeAPIError("500", ["Could not decode JSON: %s" % e])
 
         # Check the result of the API call
