@@ -323,18 +323,27 @@ class TinEyeAPIRequest(object):
         Returns: a dictionary with remaining searches, start time and end time of block.
         """
 
+        bundle_list = []
+
         obj = self._request('remaining_searches', **kwargs)
 
         results = obj.get('results')
 
-        start_date = time.strptime(results.get('start_date'), '%Y-%m-%d %X UTC')
-        start_date = datetime(*start_date[:6])
-        expire_date = time.strptime(results.get('expire_date'), '%Y-%m-%d %X UTC')
-        expire_date = datetime(*expire_date[:6])
+        for bundle in results.get('bundles'):
 
-        return {'remaining_searches': results.get('remaining_searches'),
+            start_date = time.strptime(bundle.get('start_date'), '%Y-%m-%d %X UTC')
+            start_date = datetime(*start_date[:6])
+            expire_date = time.strptime(bundle.get('expire_date'), '%Y-%m-%d %X UTC')
+            expire_date = datetime(*expire_date[:6])
+
+            bundle_list.append({
+                'remaining_searches': bundle.get('remaining_searches'),
                 'start_date': start_date,
-                'expire_date': expire_date}
+                'expire_date': expire_date})
+
+        return {
+            'bundles': bundle_list,
+            'total_remaining_searches': results.get('total_remaining_searches')}
 
     def image_count(self, **kwargs):
         """

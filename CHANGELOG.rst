@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.2
+---
+
+* Changing `remaining_searches` method to fit the new format.
+
 1.1
 ---
 
