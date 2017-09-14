@@ -3,7 +3,7 @@
 """
 __init__.py
 
-Copyright (c) 2016 TinEye. All rights reserved worldwide.
+Copyright (c) 2017 TinEye. All rights reserved worldwide.
 """
 
 from .api import TinEyeAPIRequest, TinEyeResponse, Match, Backlink

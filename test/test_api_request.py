@@ -5,7 +5,7 @@ test_api_request.py
 
 Test APIRequest class.
 
-Copyright (c) 2016 TinEye. All rights reserved worldwide.
+Copyright (c) 2017 TinEye. All rights reserved worldwide.
 """
 
 import unittest
@@ -65,34 +65,42 @@ class TestAPIRequest(unittest.TestCase):
         """
 
         signature = self.request._generate_hmac_signature('')
-        self.assertEquals(signature, '882f24a1cbe144550c79aa37b77cc2fd2ac3cd1c')
+        self.assertEquals(
+            signature, '70eaf20393eb0605270226d522dfd19d281e64ea513c271c9e6febdd826a5f7c')
 
         signature = self.request._generate_hmac_signature(' ')
-        self.assertEquals(signature, 'e2652d19426f5904635f88fb374043acce49254f')
+        self.assertEquals(
+            signature, '5f5f7e12a03ce8ac37ef8e98ac77dad52f0d380752ab4928c9e828949eb4e721')
 
         signature = self.request._generate_hmac_signature('this is a message to convert')
-        self.assertEquals(signature, 'b6ff6b77fc442ac679a2725a5e09d08271e01721')
+        self.assertEquals(
+            signature, 'a5cb1334a32b5bb43755393be47aea8182a8557097e0f70803dc85b8d4d18562')
 
         signature = self.request._generate_hmac_signature('this is another message to convert')
-        self.assertEquals(signature, 'c7ec125f1e07cefd734d9c2f919deb5295a4e5f8')
+        self.assertEquals(
+            signature, 'ce7c686d266ebeb4e8e9dc1d1cb3d88b72ed8d4f3be41096aa3c397e45ade372')
 
         nonce = 'a_nonce'
         date = 1347910390
         signature = self.request._generate_get_hmac_signature('image_count', nonce, date)
-        self.assertEquals(signature, '8e7bdc3195fce736922d6e622a6c68d8e4b43a55')
+        self.assertEquals(
+            signature, 'dfc8b4735ab41c907059b473727bd500645f161398133db1c2ebdf276221d681')
 
         signature = self.request._generate_get_hmac_signature(
             'remaining_searches', nonce, date, request_params={'param_1': 'value'})
-        self.assertEquals(signature, '25ea2472cfba2a64b81959f699fdca56537c6eb8')
+        self.assertEquals(
+            signature, '3b055b83d6e32f1604328306a51ba9b243f52986ba0458a7915d864d00d2f04e')
 
         boundary = "--boundary!"
         signature = self.request._generate_post_hmac_signature(
             'search', boundary, nonce, date, filename='file')
-        self.assertEquals(signature, '7ed0ffdf83e3185d875d87c8b0f9645bfc1becc7')
+        self.assertEquals(
+            signature, '26e789aaaf7e3f0b3c2eea15ba385a1e22da6cf93698ec98ea61627c84e35a5e')
 
         signature = self.request._generate_post_hmac_signature(
             'search', boundary, nonce, date, filename='file', request_params={'param_1': 'value'})
-        self.assertEquals(signature, '0c661bc12f9319325d542475adcc5d975711597e')
+        self.assertEquals(
+            signature, '79232caabb7433561142f465cb2e645197bbc5c56a3d3832884d8e24ed128e33')
 
     def test_sort_params(self):
         """ Test APIRequest._sort_params(). """

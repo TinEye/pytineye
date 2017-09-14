@@ -5,7 +5,7 @@ api.py
 
 Python library to ease communication with the TinEye API server.
 
-Copyright (c) 2016 TinEye. All rights reserved worldwide.
+Copyright (c) 2017 TinEye. All rights reserved worldwide.
 """
 
 from datetime import datetime
@@ -16,6 +16,7 @@ import time
 from .api_request import APIRequest
 from .exceptions import TinEyeAPIError
 
+import certifi
 import urllib3
 
 
@@ -26,16 +27,16 @@ class TinEyeResponse(object):
     Attributes:
 
     - `matches`, a list of Match objects.
-    - `total_results`, total number of results.
+    - `stats`, stats for this search.
     """
 
-    def __init__(self, matches, total_results=None):
+    def __init__(self, matches, stats):
         self.matches = matches
-        self.total_results = total_results or 0
+        self.stats = stats
 
     def __repr__(self):
-        return '%s(matches="%s", total_results=%s)' % \
-            (self.__class__.__name__, self.matches, self.total_results)
+        return '%s(matches=%s, stats=%s)' % \
+            (self.__class__.__name__, self.matches, self.stats)
 
     @staticmethod
     def _from_dict(result_json):
@@ -52,15 +53,17 @@ class TinEyeResponse(object):
             raise TinEyeAPIError("500", ["Please pass in a dictionary to _from_dict()"])
 
         matches = []
+        stats = {}
         if 'results' in result_json:
             results = result_json['results']
             if 'matches' in results:
                 for m in results.get('matches'):
                     match = Match._from_dict(m)
                     matches.append(match)
-        total_results = results.get('total_results')
+        if 'stats' in result_json:
+            stats = result_json['stats']
 
-        return TinEyeResponse(matches=matches, total_results=total_results)
+        return TinEyeResponse(matches=matches, stats=stats)
 
 
 class Match(object):
@@ -70,6 +73,8 @@ class Match(object):
     Attributes:
 
     - `image_url`, link to the result image.
+    - `domain`, domain this result was found on.
+    - `score`, a number (0 to 100) that indicates how closely the images match.
     - `width`, image width in pixels.
     - `height`, image height in pixels.
     - `size`, image area in pixels.
@@ -78,12 +83,15 @@ class Match(object):
     - `overlay`, overlay URL.
     - `backlinks`, a list of Backlink objects pointing to
       the original websites and image URLs.
-    - `contributor`, whether this is a TinEye contributor image.
+    - `tags`, whether this match belongs to a collection or stock domain.
     """
 
-    def __init__(self, image_url, width, height, size, format,
-                 filesize, overlay, contributor, backlinks=None):
+    def __init__(
+            self, image_url, domain, score, width, height, size, format,
+            filesize, overlay, tags=None, backlinks=None):
         self.image_url = image_url
+        self.domain = domain
+        self.score = score
         self.width = width
         self.height = height
         self.size = size
@@ -91,11 +99,14 @@ class Match(object):
         self.filesize = filesize
         self.overlay = overlay
         self.backlinks = backlinks
-        self.contributor = contributor
+        if not tags:
+            self.tags = []
+        else:
+            self.tags = tags
 
     def __repr__(self):
-        return '%s(image_url="%s", width=%i, height=%i)' % \
-               (self.__class__.__name__, self.image_url, self.width, self.height)
+        return '%s(image_url="%s", score=%.2f, width=%i, height=%i)' % \
+               (self.__class__.__name__, self.image_url, self.score, self.width, self.height)
 
     @staticmethod
     def _from_dict(match_json):
@@ -117,13 +128,15 @@ class Match(object):
                 backlinks.append(Backlink._from_dict(b))
         match = Match(
             image_url=match_json.get('image_url'),
+            domain=match_json.get('domain'),
+            score=match_json.get('score'),
             width=match_json.get('width'),
             height=match_json.get('height'),
             size=match_json.get('size'),
             format=match_json.get('format'),
             filesize=match_json.get('filesize'),
             overlay=match_json.get('overlay'),
-            contributor=match_json.get('contributor'),
+            tags=match_json.get('tags'),
             backlinks=backlinks)
         return match
 
@@ -145,7 +158,7 @@ class Backlink(object):
         self.crawl_date = crawl_date
 
     def __repr__(self):
-        return '%s(url="%s", backlink=%s, crawl_date=%s)' % \
+        return '%s(url="%s", backlink="%s", crawl_date=%s)' % \
                (self.__class__.__name__, self.url, self.backlink, str(self.crawl_date))
 
     @staticmethod
@@ -200,19 +213,25 @@ class TinEyeAPIRequest(object):
     Getting information about your search bundle:
 
         >>> api.remaining_searches()
-        {'expire_date': datetime.datetime(2012, 9, 28, 11, 11, 31),
-         'remaining_searches': 854,
-         'start_date': datetime.datetime(2011, 9, 29, 11, 11, 31)}
+        {'bundles': [{'expire_date': datetime.datetime(2019, 3, 9, 14, 9, 12),
+           'remaining_searches': 7892,
+           'start_date': datetime.datetime(2017, 3, 10, 14, 9, 12)},
+          {'expire_date': datetime.datetime(2019, 3, 23, 9, 52, 46),
+           'remaining_searches': 50000,
+           'start_date': datetime.datetime(2017, 3, 24, 9, 52, 45)}],
+         'total_remaining_searches': 57892}
 
     Getting an image count:
 
         >>> api.image_count()
-        2180913080
+        22117595538
 
     """
 
     def __init__(self, api_url='https://api.tineye.com/rest/', public_key=None, private_key=None):
-        self.http = urllib3.connection_from_url(api_url)
+        self.http_pool = urllib3.PoolManager(
+            cert_reqs='CERT_REQUIRED',
+            ca_certs=certifi.where())
         self.request = APIRequest(api_url, public_key, private_key)
 
     def _request(self, method, params=None, image_file=None, **kwargs):
@@ -238,11 +257,11 @@ class TinEyeAPIRequest(object):
             # If an image file was provided, send a POST request, else send a GET request
             if image_file is None:
                 request_string = self.request.get_request(method, params)
-                response = self.http.request('GET', request_string)
+                response = self.http_pool.request('GET', request_string)
             else:
                 filename = image_file[0]
                 request_string, boundary = self.request.post_request(method, filename, params)
-                response = self.http.request_encode_body(
+                response = self.http_pool.request_encode_body(
                     'POST', request_string,
                     fields={'image_upload': image_file},
                     multipart_boundary=boundary)

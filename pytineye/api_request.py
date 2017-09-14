@@ -6,7 +6,7 @@ api_request.py
 Provides authentication with the TinEye API server.
 For more information see https://services.tineye.com/developers/tineyeapi/authentication.html
 
-Copyright (c) 2016 TinEye. All rights reserved worldwide.
+Copyright (c) 2017 TinEye. All rights reserved worldwide.
 """
 
 from future.standard_library import install_aliases
@@ -17,7 +17,7 @@ import email.generator
 import time
 import urllib.parse
 
-from hashlib import sha1 as sha
+from hashlib import sha256 as sha
 
 from Crypto.Random import random
 from .exceptions import APIRequestError
@@ -210,8 +210,8 @@ class APIRequest(object):
         nonce = self._generate_nonce()
         date = int(time.time())
 
-        api_signature = self._generate_get_hmac_signature(method, nonce, date,
-                                                          request_params=request_params)
+        api_signature = self._generate_get_hmac_signature(
+            method, nonce, date, request_params=request_params)
 
         return self._request_url(method, nonce, date, api_signature, request_params)
 
