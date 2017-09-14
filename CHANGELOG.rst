@@ -9,7 +9,7 @@ Changelog
   the search.
 * Added `score` and `domain` attributes to TinEyeResponse.
 * Updated to use SHA256 to sign requests to the TinEye API.
-* Switched to using urllib3[secure]
+* Switched to using `urllib3[secure]`.
 
 1.2
 ---
@@ -17,13 +17,13 @@ Changelog
 
 1.1
 ---
-* Added Python 3 support
-* Replaced `simplejson` with `json`
+* Added Python 3 support.
+* Replaced `simplejson` with `json`.
 
 1.0
 ---
-* Added `total_results` to TinEyeResponse
+* Added `total_results` to TinEyeResponse.
 
 0.1
 ---
-* Initial release
+* Initial release.
