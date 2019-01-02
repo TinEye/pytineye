@@ -23,7 +23,7 @@ setup(
         'nose'],
     install_requires=[
         'future==0.16',
-        'pycrypto==2.6.1',
+        'pycryptodome==2.6.1',
         'urllib3[secure]==1.22'
     ]
 )
