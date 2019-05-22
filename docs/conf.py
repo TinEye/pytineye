@@ -38,7 +38,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'TinEye Commercial API library'
+project = u'TinEye API library'
 copyright = u'%d, TinEye' % datetime.now().year
 
 # The version info for the project you're documenting, acts as replacement for
@@ -159,7 +159,7 @@ html_show_sourcelink = False
 #html_file_suffix = ''
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'TinEyeCommercialAPIdoc'
+htmlhelp_basename = 'TinEyeAPIdoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -173,7 +173,7 @@ htmlhelp_basename = 'TinEyeCommercialAPIdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'TinEyeCommercialAPI.tex', u'TinEye Commercial API Documentation',
+  ('index', 'TinEyeAPI.tex', u'TinEye API Documentation',
    u'TinEye', 'manual'),
 ]
 

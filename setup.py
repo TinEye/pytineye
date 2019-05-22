@@ -5,7 +5,7 @@ version = '1.3'
 setup(
     name='pytineye',
     version=version,
-    description="Python client for the TinEye Commercial API.",
+    description="Python client for the TinEye API.",
     classifiers=[
         'Intended Audience :: Developers',
         'Programming Language :: Python :: 2.7',
