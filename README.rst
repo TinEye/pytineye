@@ -1,7 +1,7 @@
-TinEye Commercial API Python client
-===================================
+TinEye API Python client
+========================
 
-**pytineye** is a Python client library for the TinEye Commercial API. The TinEye Commercial API
+**pytineye** is a Python client library for the TinEye API. The TinEye API
 is a TinEye paid search alternative for professional, commercial or high-volume users.
 See `<https://api.tineye.com/>`_ for more information.
 

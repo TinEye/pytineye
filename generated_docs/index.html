@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pytineye - Python client for TinEye Commercial API &mdash; TinEye Commercial API library 1.0 documentation</title>
+    <title>pytineye - Python client for the TinEye API &mdash; TinEye API library 1.0 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -23,28 +23,27 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="TinEye Commercial API library 1.0 documentation" href="#" />
+    <link rel="top" title="TinEye API library 1.0 documentation" href="#" />
    
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
   <body role="document">
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="nav-item nav-item-0"><a href="#">TinEye Commercial API library 1.0 documentation</a> &raquo;</li> 
-      </ul>
-    </div>  
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
-  <div class="section" id="pytineye-python-client-for-tineye-commercial-api">
-<h1><code class="xref py py-mod docutils literal"><span class="pre">pytineye</span></code> - Python client for TinEye Commercial API<a class="headerlink" href="#pytineye-python-client-for-tineye-commercial-api" title="Permalink to this headline">¶</a></h1>
-<p><code class="xref py py-mod docutils literal"><span class="pre">pytineye</span></code> is a Python client for the TinEye Commercial API.</p>
+  <div class="section" id="pytineye-python-client-for-the-tineye-api">
+<h1><code class="xref py py-mod docutils literal"><span class="pre">pytineye</span></code> - Python client for the TinEye API<a class="headerlink" href="#pytineye-python-client-for-the-tineye-api" title="Permalink to this headline">¶</a></h1>
+<p><code class="xref py py-mod docutils literal"><span class="pre">pytineye</span></code> is a Python client for the TinEye API.</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><a class="reference internal" href="#tineyeapirequest" id="id1">TinEyeAPIRequest</a></li>
@@ -60,20 +59,20 @@
 <em class="property">class </em><code class="descclassname">pytineye.</code><code class="descname">TinEyeAPIRequest</code><span class="sig-paren">(</span><em>api_url='https://api.tineye.com/rest/'</em>, <em>public_key=None</em>, <em>private_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pytineye.TinEyeAPIRequest" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class to ease communication with the TinEye API server.</p>
 <p>Establish a connection to the API:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pytineye</span> <span class="kn">import</span> <span class="n">TinEyeAPIRequest</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pytineye</span> <span class="kn">import</span> <span class="n">TinEyeAPIRequest</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">api</span> <span class="o">=</span> <span class="n">TinEyeAPIRequest</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="s">&#39;https://api.tineye.com/rest/&#39;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="s">&#39;your_public_key&#39;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="s">&#39;your_private_key&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="s1">&#39;https://api.tineye.com/rest/&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s1">&#39;your_public_key&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s1">&#39;your_private_key&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Searching for an image using an image URL:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">api</span><span class="o">.</span><span class="n">search_url</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s">&#39;http://tineye.com/images/meloncat.jpg&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">api</span><span class="o">.</span><span class="n">search_url</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s1">&#39;http://tineye.com/images/meloncat.jpg&#39;</span><span class="p">)</span>
 <span class="go">TinEyeResponse(...)</span>
 </pre></div>
 </div>
 <p>Searching for an image using image data:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fp</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;meloncat.jpg&#39;</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fp</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;meloncat.jpg&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">api</span><span class="o">.</span><span class="n">search_data</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
 <span class="go">TinEyeResponse(...)</span>
@@ -81,15 +80,19 @@
 </pre></div>
 </div>
 <p>Getting information about your search bundle:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">api</span><span class="o">.</span><span class="n">remaining_searches</span><span class="p">()</span>
-<span class="go">{&#39;expire_date&#39;: datetime.datetime(2012, 9, 28, 11, 11, 31),</span>
-<span class="go"> &#39;remaining_searches&#39;: 854,</span>
-<span class="go"> &#39;start_date&#39;: datetime.datetime(2011, 9, 29, 11, 11, 31)}</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">api</span><span class="o">.</span><span class="n">remaining_searches</span><span class="p">()</span>
+<span class="go">{&#39;bundles&#39;: [{&#39;expire_date&#39;: datetime.datetime(2019, 3, 9, 14, 9, 12),</span>
+<span class="go">   &#39;remaining_searches&#39;: 7892,</span>
+<span class="go">   &#39;start_date&#39;: datetime.datetime(2017, 3, 10, 14, 9, 12)},</span>
+<span class="go">  {&#39;expire_date&#39;: datetime.datetime(2019, 3, 23, 9, 52, 46),</span>
+<span class="go">   &#39;remaining_searches&#39;: 50000,</span>
+<span class="go">   &#39;start_date&#39;: datetime.datetime(2017, 3, 24, 9, 52, 45)}],</span>
+<span class="go"> &#39;total_remaining_searches&#39;: 57892}</span>
 </pre></div>
 </div>
 <p>Getting an image count:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">api</span><span class="o">.</span><span class="n">image_count</span><span class="p">()</span>
-<span class="go">2180913080</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">api</span><span class="o">.</span><span class="n">image_count</span><span class="p">()</span>
+<span class="go">22117595538</span>
 </pre></div>
 </div>
 <dl class="method">
@@ -151,12 +154,12 @@ defaults to descending (desc).</li>
 <h2><a class="toc-backref" href="#id2">TinEyeResponse</a><a class="headerlink" href="#tineyeresponse" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pytineye.TinEyeResponse">
-<em class="property">class </em><code class="descclassname">pytineye.</code><code class="descname">TinEyeResponse</code><span class="sig-paren">(</span><em>matches</em>, <em>total_results=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pytineye.TinEyeResponse" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pytineye.</code><code class="descname">TinEyeResponse</code><span class="sig-paren">(</span><em>matches</em>, <em>stats</em><span class="sig-paren">)</span><a class="headerlink" href="#pytineye.TinEyeResponse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represents a response from the API.</p>
 <p>Attributes:</p>
 <ul class="simple">
 <li><cite>matches</cite>, a list of Match objects.</li>
-<li><cite>total_results</cite>, total number of results.</li>
+<li><cite>stats</cite>, stats for this search.</li>
 </ul>
 </dd></dl>
 
@@ -165,11 +168,13 @@ defaults to descending (desc).</li>
 <h2><a class="toc-backref" href="#id3">Match</a><a class="headerlink" href="#match" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pytineye.Match">
-<em class="property">class </em><code class="descclassname">pytineye.</code><code class="descname">Match</code><span class="sig-paren">(</span><em>image_url</em>, <em>width</em>, <em>height</em>, <em>size</em>, <em>format</em>, <em>filesize</em>, <em>overlay</em>, <em>contributor</em>, <em>backlinks=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pytineye.Match" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pytineye.</code><code class="descname">Match</code><span class="sig-paren">(</span><em>image_url</em>, <em>domain</em>, <em>score</em>, <em>width</em>, <em>height</em>, <em>size</em>, <em>format</em>, <em>filesize</em>, <em>overlay</em>, <em>tags=None</em>, <em>backlinks=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pytineye.Match" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represents an image match.</p>
 <p>Attributes:</p>
 <ul class="simple">
 <li><cite>image_url</cite>, link to the result image.</li>
+<li><cite>domain</cite>, domain this result was found on.</li>
+<li><cite>score</cite>, a number (0 to 100) that indicates how closely the images match.</li>
 <li><cite>width</cite>, image width in pixels.</li>
 <li><cite>height</cite>, image height in pixels.</li>
 <li><cite>size</cite>, image area in pixels.</li>
@@ -178,7 +183,7 @@ defaults to descending (desc).</li>
 <li><cite>overlay</cite>, overlay URL.</li>
 <li><cite>backlinks</cite>, a list of Backlink objects pointing to
 the original websites and image URLs.</li>
-<li><cite>contributor</cite>, whether this is a TinEye contributor image.</li>
+<li><cite>tags</cite>, whether this match belongs to a collection or stock domain.</li>
 </ul>
 </dd></dl>
 
@@ -202,13 +207,14 @@ the original websites and image URLs.</li>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#"><code class="docutils literal"><span class="pre">pytineye</span></code> - Python client for TinEye Commercial API</a><ul>
+<li><a class="reference internal" href="#"><code class="docutils literal"><span class="pre">pytineye</span></code> - Python client for the TinEye API</a><ul>
 <li><a class="reference internal" href="#tineyeapirequest">TinEyeAPIRequest</a></li>
 <li><a class="reference internal" href="#tineyeresponse">TinEyeResponse</a></li>
 <li><a class="reference internal" href="#match">Match</a></li>
@@ -216,7 +222,13 @@ the original websites and image URLs.</li>
 </ul>
 </li>
 </ul>
-
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
@@ -235,11 +247,11 @@ the original websites and image URLs.</li>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2015, Idée Inc.
+      &copy;2019, TinEye.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

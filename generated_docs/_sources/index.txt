@@ -1,10 +1,10 @@
-==========================================================
- :mod:`pytineye` - Python client for TinEye Commercial API
-==========================================================
+===================================================
+ :mod:`pytineye` - Python client for the TinEye API
+===================================================
 
 .. currentmodule:: pytineye
 
-:mod:`pytineye` is a Python client for the TinEye Commercial API.
+:mod:`pytineye` is a Python client for the TinEye API.
 
 .. contents::
     :local:
