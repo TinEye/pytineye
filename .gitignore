@@ -2,3 +2,6 @@
 build/
 dist/
 pytineye.egg-info/
+env
+.env
+.vscode
