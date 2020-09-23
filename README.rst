@@ -12,14 +12,14 @@ Download the latest version of the library and install with pip:
 
 ::
 
-    $ wget https://github.com/TinEye/pytineye/zipball/master --output-document=pytineye.zip
+    $ wget https://github.com/TinEye/pytineye/archive/main.zip --output-document=pytineye.zip
     $ pip install pytineye.zip
 
 If you do not have pip, you can install it first:
 
 ::
 
-    $ curl https://raw.github.com/pypa/pip/master/contrib/get-pip.py | python
+    $ curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py | python
 
 Or you can install from the zip file:
 
