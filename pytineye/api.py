@@ -35,8 +35,11 @@ class TinEyeResponse(object):
         self.stats = stats
 
     def __repr__(self):
-        return '%s(matches=%s, stats=%s)' % \
-            (self.__class__.__name__, self.matches, self.stats)
+        return "%s(matches=%s, stats=%s)" % (
+            self.__class__.__name__,
+            self.matches,
+            self.stats,
+        )
 
     @staticmethod
     def _from_dict(result_json):
@@ -54,16 +57,20 @@ class TinEyeResponse(object):
 
         matches = []
         stats = {}
-        if 'results' in result_json:
-            results = result_json['results']
-            if 'matches' in results:
-                for m in results.get('matches'):
+
+        if "results" in result_json:
+            results = result_json["results"]
+            if "matches" in results:
+                for m in results.get("matches"):
                     match = Match._from_dict(m)
                     matches.append(match)
-        if 'stats' in result_json:
-            stats = result_json['stats']
+        if "stats" in result_json:
+            stats = result_json["stats"]
 
-        return TinEyeResponse(matches=matches, stats=stats)
+        return TinEyeResponse(
+            matches=matches,
+            stats=stats,
+        )
 
 
 class Match(object):
@@ -87,8 +94,19 @@ class Match(object):
     """
 
     def __init__(
-            self, image_url, domain, score, width, height, size, format,
-            filesize, overlay, tags=None, backlinks=None):
+        self,
+        image_url,
+        domain,
+        score,
+        width,
+        height,
+        size,
+        format,
+        filesize,
+        overlay,
+        tags=None,
+        backlinks=None,
+    ):
         self.image_url = image_url
         self.domain = domain
         self.score = score
@@ -105,8 +123,13 @@ class Match(object):
             self.tags = tags
 
     def __repr__(self):
-        return '%s(image_url="%s", score=%.2f, width=%i, height=%i)' % \
-               (self.__class__.__name__, self.image_url, self.score, self.width, self.height)
+        return '%s(image_url="%s", score=%.2f, width=%i, height=%i)' % (
+            self.__class__.__name__,
+            self.image_url,
+            self.score,
+            self.width,
+            self.height,
+        )
 
     @staticmethod
     def _from_dict(match_json):
@@ -123,21 +146,22 @@ class Match(object):
             raise TinEyeAPIError("500", ["Please pass in a dictionary to _from_dict()"])
 
         backlinks = []
-        if 'backlinks' in match_json:
-            for b in match_json['backlinks']:
+        if "backlinks" in match_json:
+            for b in match_json["backlinks"]:
                 backlinks.append(Backlink._from_dict(b))
         match = Match(
-            image_url=match_json.get('image_url'),
-            domain=match_json.get('domain'),
-            score=match_json.get('score'),
-            width=match_json.get('width'),
-            height=match_json.get('height'),
-            size=match_json.get('size'),
-            format=match_json.get('format'),
-            filesize=match_json.get('filesize'),
-            overlay=match_json.get('overlay'),
-            tags=match_json.get('tags'),
-            backlinks=backlinks)
+            image_url=match_json.get("image_url"),
+            domain=match_json.get("domain"),
+            score=match_json.get("score"),
+            width=match_json.get("width"),
+            height=match_json.get("height"),
+            size=match_json.get("size"),
+            format=match_json.get("format"),
+            filesize=match_json.get("filesize"),
+            overlay=match_json.get("overlay"),
+            tags=match_json.get("tags"),
+            backlinks=backlinks,
+        )
         return match
 
 
@@ -158,8 +182,12 @@ class Backlink(object):
         self.crawl_date = crawl_date
 
     def __repr__(self):
-        return '%s(url="%s", backlink="%s", crawl_date=%s)' % \
-               (self.__class__.__name__, self.url, self.backlink, str(self.crawl_date))
+        return '%s(url="%s", backlink="%s", crawl_date=%s)' % (
+            self.__class__.__name__,
+            self.url,
+            self.backlink,
+            str(self.crawl_date),
+        )
 
     @staticmethod
     def _from_dict(backlink_json):
@@ -176,13 +204,14 @@ class Backlink(object):
             raise TinEyeAPIError("500", ["Please pass in a dictionary to _from_dict()"])
 
         crawl_date = datetime.min
-        if backlink_json.get('crawl_date'):
-            crawl_date = time.strptime(backlink_json.get('crawl_date'), '%Y-%m-%d')
+        if backlink_json.get("crawl_date"):
+            crawl_date = time.strptime(backlink_json.get("crawl_date"), "%Y-%m-%d")
             crawl_date = datetime(*crawl_date[:6])
         return Backlink(
-            url=backlink_json.get('url'),
-            backlink=backlink_json.get('backlink'),
-            crawl_date=crawl_date)
+            url=backlink_json.get("url"),
+            backlink=backlink_json.get("backlink"),
+            crawl_date=crawl_date,
+        )
 
 
 class TinEyeAPIRequest(object):
@@ -228,10 +257,14 @@ class TinEyeAPIRequest(object):
 
     """
 
-    def __init__(self, api_url='https://api.tineye.com/rest/', public_key=None, private_key=None):
+    def __init__(
+        self, api_url="https://api.tineye.com/rest/", public_key="", private_key=""
+    ):
         self.http_pool = urllib3.PoolManager(
-            cert_reqs='CERT_REQUIRED',
-            ca_certs=certifi.where())
+            cert_reqs="CERT_REQUIRED",
+            ca_certs=certifi.where(),
+            timeout=urllib3.Timeout(connect=15.0, read=60.0),
+        )
         self.request = APIRequest(api_url, public_key, private_key)
 
     def _request(self, method, params=None, image_file=None, **kwargs):
@@ -257,29 +290,33 @@ class TinEyeAPIRequest(object):
             # If an image file was provided, send a POST request, else send a GET request
             if image_file is None:
                 request_string = self.request.get_request(method, params)
-                response = self.http_pool.request('GET', request_string)
+                response = self.http_pool.request("GET", request_string)
             else:
                 filename = image_file[0]
-                request_string, boundary = self.request.post_request(method, filename, params)
+                request_string, boundary = self.request.post_request(
+                    method, filename, params
+                )
                 response = self.http_pool.request_encode_body(
-                    'POST', request_string,
-                    fields={'image_upload': image_file},
-                    multipart_boundary=boundary)
+                    "POST",
+                    request_string,
+                    fields={"image_upload": image_file},
+                    multipart_boundary=boundary,
+                )
             # Parse the JSON into a Python object
-            obj = json.loads(response.data.decode('utf-8'))
+            obj = json.loads(response.data.decode("utf-8"))
 
         except ValueError as e:
             raise TinEyeAPIError("500", ["Could not decode JSON: %s" % e])
 
         # Check the result of the API call
-        if response.status != http.client.OK or obj.get('code') != http.client.OK:
-            raise TinEyeAPIError(obj['code'], obj.get('messages'))
+        if response.status != http.client.OK or obj.get("code") != http.client.OK:
+            raise TinEyeAPIError(obj["code"], obj.get("messages"))
 
         return obj
 
     def search_url(
-            self, url, offset=0, limit=100, sort='score',
-            order='desc', **kwargs):
+        self, url, offset=0, limit=100, sort="score", order="desc", **kwargs
+    ):
         """
         Perform searches on the TinEye index using an image URL.
 
@@ -295,19 +332,20 @@ class TinEyeAPIRequest(object):
         """
 
         params = {
-            'image_url': url,
-            'offset': offset,
-            'limit': limit,
-            'sort': sort,
-            'order': order}
+            "image_url": url,
+            "offset": offset,
+            "limit": limit,
+            "sort": sort,
+            "order": order,
+        }
 
-        obj = self._request('search', params, **kwargs)
+        obj = self._request("search", params, **kwargs)
 
         return TinEyeResponse._from_dict(obj)
 
     def search_data(
-            self, data, offset=0, limit=100,
-            sort='score', order='desc', **kwargs):
+        self, data, offset=0, limit=100, sort="score", order="desc", **kwargs
+    ):
         """
         Perform searches on the TinEye index using image data.
 
@@ -322,14 +360,10 @@ class TinEyeAPIRequest(object):
         Returns: a TinEye Response object.
         """
 
-        params = {
-            'offset': offset,
-            'limit': limit,
-            'sort': sort,
-            'order': order}
+        params = {"offset": offset, "limit": limit, "sort": sort, "order": order}
 
         image_file = ("image.jpg", data)
-        obj = self._request('search', params=params, image_file=image_file, **kwargs)
+        obj = self._request("search", params=params, image_file=image_file, **kwargs)
 
         return TinEyeResponse._from_dict(obj)
 
@@ -344,25 +378,29 @@ class TinEyeAPIRequest(object):
 
         bundle_list = []
 
-        obj = self._request('remaining_searches', **kwargs)
+        obj = self._request("remaining_searches", **kwargs)
 
-        results = obj.get('results')
+        results = obj.get("results")
 
-        for bundle in results.get('bundles'):
+        for bundle in results.get("bundles"):
 
-            start_date = time.strptime(bundle.get('start_date'), '%Y-%m-%d %X UTC')
+            start_date = time.strptime(bundle.get("start_date"), "%Y-%m-%d %X UTC")
             start_date = datetime(*start_date[:6])
-            expire_date = time.strptime(bundle.get('expire_date'), '%Y-%m-%d %X UTC')
+            expire_date = time.strptime(bundle.get("expire_date"), "%Y-%m-%d %X UTC")
             expire_date = datetime(*expire_date[:6])
 
-            bundle_list.append({
-                'remaining_searches': bundle.get('remaining_searches'),
-                'start_date': start_date,
-                'expire_date': expire_date})
+            bundle_list.append(
+                {
+                    "remaining_searches": bundle.get("remaining_searches"),
+                    "start_date": start_date,
+                    "expire_date": expire_date,
+                }
+            )
 
         return {
-            'bundles': bundle_list,
-            'total_remaining_searches': results.get('total_remaining_searches')}
+            "bundles": bundle_list,
+            "total_remaining_searches": results.get("total_remaining_searches"),
+        }
 
     def image_count(self, **kwargs):
         """
@@ -373,5 +411,5 @@ class TinEyeAPIRequest(object):
         Returns: TinEye image count.
         """
 
-        obj = self._request('image_count', **kwargs)
-        return obj.get('results')
+        obj = self._request("image_count", **kwargs)
+        return obj.get("results")

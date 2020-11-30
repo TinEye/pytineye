@@ -1,6 +1,13 @@
 Changelog
 =========
 
+2.0.0
+-----
+* Fixed a bug in the construction of the string to sign.
+* Added timeouts to TinEye API requests.
+* Used [black](https://github.com/psf/black) to reformat code.
+* Updated versions for dependencies.
+
 1.3
 ---
 * Removed `total_results` from TinEyeResponse object since it's been moved to `stats`.

@@ -10,6 +10,7 @@ Copyright (c) 2017 TinEye. All rights reserved worldwide.
 """
 
 from future.standard_library import install_aliases
+
 install_aliases()
 
 import hmac
@@ -29,7 +30,9 @@ class APIRequest(object):
     # Nonce length
     min_nonce_length = 24
     max_nonce_length = 255
-    nonce_allowable_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRTSUVWXYZ0123456789-_=.,*^"
+    nonce_allowable_chars = (
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRTSUVWXYZ0123456789-_=.,*^"
+    )
 
     def __init__(self, api_url, public_key, private_key):
         self.api_url = api_url
@@ -46,18 +49,24 @@ class APIRequest(object):
         """
         try:
             int(nonce_length)
-            if nonce_length < APIRequest.min_nonce_length or \
-                    nonce_length > APIRequest.max_nonce_length:
+            if (
+                nonce_length < APIRequest.min_nonce_length
+                or nonce_length > APIRequest.max_nonce_length
+            ):
                 raise ValueError()
         except ValueError:
             raise APIRequestError(
-                "Nonce length must be an int between %d and %d chars" %
-                (APIRequest.min_nonce_length, APIRequest.max_nonce_length))
+                "Nonce length must be an int between %d and %d chars"
+                % (APIRequest.min_nonce_length, APIRequest.max_nonce_length)
+            )
 
         rand = random.StrongRandom()
 
         nonce = ""
-        nonce = [rand.choice(APIRequest.nonce_allowable_chars) for i in range(0, nonce_length)]
+        nonce = [
+            rand.choice(APIRequest.nonce_allowable_chars)
+            for i in range(0, nonce_length)
+        ]
 
         return "".join(nonce)
 
@@ -75,13 +84,16 @@ class APIRequest(object):
         http_verb = "GET"
 
         param_str = self._sort_params(request_params=request_params)
-        request_url = '%s%s/' % (self.api_url, method)
-        to_sign = self.private_key + http_verb + str(date) + nonce + request_url + param_str
+        request_url = "%s%s/" % (self.api_url, method)
+        to_sign = (
+            self.private_key + http_verb + str(date) + nonce + request_url + param_str
+        )
 
         return self._generate_hmac_signature(to_sign)
 
     def _generate_post_hmac_signature(
-            self, method, boundary, nonce, date, filename, request_params={}):
+        self, method, boundary, nonce, date, filename, request_params={}
+    ):
         """
         Generate the HMAC signature hash for a POST request.
 
@@ -99,10 +111,17 @@ class APIRequest(object):
         content_type = "multipart/form-data; boundary=%s" % boundary
 
         param_str = self._sort_params(request_params=request_params)
-        request_url = '%s%s/' % (self.api_url, method)
-        to_sign = self.private_key + http_verb + content_type + \
-            urllib.parse.quote_plus(filename).lower() + \
-            str(date) + nonce + request_url + param_str
+        request_url = "%s%s/" % (self.api_url, method)
+        to_sign = (
+            self.private_key
+            + http_verb
+            + content_type
+            + urllib.parse.quote_plus(filename).lower()
+            + str(date)
+            + nonce
+            + request_url
+            + param_str
+        )
 
         return self._generate_hmac_signature(to_sign)
 
@@ -116,7 +135,9 @@ class APIRequest(object):
         """
 
         signature = ""
-        signature = hmac.new(self.private_key.encode('utf-8'), to_sign.encode('utf-8'), sha)
+        signature = hmac.new(
+            self.private_key.encode("utf-8"), to_sign.encode("utf-8"), sha
+        )
 
         return signature.hexdigest()
 
@@ -132,37 +153,40 @@ class APIRequest(object):
             string params.
         """
 
-        keys = []
-        unsorted_params = {}
+        query_params = {}
+        params = []
 
-        special_keys = ["api_key", "api_sig", "date", "nonce", "image_upload"]
-        for key in list(request_params.keys()):
-            lc_key = key.lower()
-            # Sort the parameters if they are not part of the following list
-            if lc_key not in special_keys:
-                # If the parameter is image_url, URL encode the image URL then lowercase it
-                if lc_key == "image_url":
-                    value = request_params[key]
+        for param in request_params.keys():
+            if param is None:
+                continue
+            if param.lower() not in [
+                "api_key",
+                "public_key",
+                "api_sig",
+                "date",
+                "nonce",
+                "image_upload",
+            ]:
+                # Assume URL with % was already urlencoded
+                if param.lower() == "image_url":
+                    value = request_params[param]
                     if type(value) is bytes:
-                        value = value.decode('utf-8')
-                    if "%" not in value:
-                        value = urllib.parse.quote_plus(value, "~")
-                    unsorted_params[lc_key] = value
+                        value = value.decode("utf-8")
+                    # Lowercase and encode the URL if needed
+                    url_escape = urllib.parse.quote_plus(value, "~")
+                    query_params[param.lower()] = url_escape
                     if lowercase:
-                        unsorted_params[lc_key] = value.lower()
-
+                        query_params[param.lower()] = url_escape.lower()
                 else:
-                    unsorted_params[lc_key] = request_params[key]
-                keys.append(key)
+                    query_params[param.lower()] = request_params[param]
+                params.append(param.lower())
 
-        keys.sort()
-        sorted_pairs = []
+        params.sort()
+        query_param_pairs = []
+        for param in params:
+            query_param_pairs.append("%s=%s" % (param, query_params[param]))
 
-        # Return a query string
-        for key in keys:
-            sorted_pairs.append("%s=%s" % (key, unsorted_params[key.lower()]))
-
-        return "&".join(sorted_pairs)
+        return "&".join(query_param_pairs)
 
     def _request_url(self, method, nonce, date, api_signature, request_params):
         """
@@ -178,22 +202,28 @@ class APIRequest(object):
         Returns: The API URL to send a request to.
         """
 
-        base_url = '%s%s/' % (self.api_url, method)
+        base_url = "%s%s/" % (self.api_url, method)
 
-        request_url = "%s?api_key=%s&date=%s&nonce=%s&api_sig=%s"
+        if self.public_key != "":
+            request_url = "%s?api_key=%s&date=%s&nonce=%s&api_sig=%s"
 
-        request_url = request_url % (
-            base_url,
-            self.public_key,
-            str(date),
-            nonce,
-            api_signature)
+            request_url = request_url % (
+                base_url,
+                self.public_key,
+                str(date),
+                nonce,
+                api_signature,
+            )
+        else:
+            request_url = "%s?" % base_url
 
         # Need to sort all other parameters
         extra_params = self._sort_params(request_params=request_params, lowercase=False)
 
-        if extra_params != "":
+        if extra_params != "" and self.public_key != "":
             request_url += "&" + extra_params
+        else:
+            request_url += extra_params
 
         return request_url
 
@@ -211,7 +241,8 @@ class APIRequest(object):
         date = int(time.time())
 
         api_signature = self._generate_get_hmac_signature(
-            method, nonce, date, request_params=request_params)
+            method, nonce, date, request_params=request_params
+        )
 
         return self._request_url(method, nonce, date, api_signature, request_params)
 
@@ -241,7 +272,10 @@ class APIRequest(object):
         date = int(time.time())
 
         api_signature = self._generate_post_hmac_signature(
-            "search", boundary, nonce, date, filename,
-            request_params=request_params)
+            "search", boundary, nonce, date, filename, request_params=request_params
+        )
 
-        return self._request_url(method, nonce, date, api_signature, request_params), boundary
+        return (
+            self._request_url(method, nonce, date, api_signature, request_params),
+            boundary,
+        )
