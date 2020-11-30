@@ -3,7 +3,7 @@ TinEye API Python client
 
 **pytineye** is a Python client library for the TinEye API. The TinEye API
 is a TinEye paid search alternative for professional, commercial or high-volume users.
-See [TinEye API](https://api.tineye.com/) for more information.
+See <https://api.tineye.com/> for more information.
 
 Installation
 ------------
@@ -19,8 +19,6 @@ If you do not have pip, you can install it first:
 
 Or you can install from the zip file:
 
-::
-
     $ python setup.py install
 
 Documentation
@@ -31,4 +29,4 @@ View [documentation](https://api.tineye.com/python/docs/).
 Support
 -------
 
-Please send comments, recommendations, and bug reports to support@tineye.com.
+Please send comments, recommendations, and bug reports to <support@tineye.com>.
