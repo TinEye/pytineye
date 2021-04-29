@@ -5,7 +5,7 @@ api.py
 
 Python library to ease communication with the TinEye API server.
 
-Copyright (c) 2017 TinEye. All rights reserved worldwide.
+Copyright (c) 2021 TinEye. All rights reserved worldwide.
 """
 
 from datetime import datetime
@@ -242,12 +242,12 @@ class TinEyeAPIRequest(object):
     Getting information about your search bundle:
 
         >>> api.remaining_searches()
-        {'bundles': [{'expire_date': datetime.datetime(2019, 3, 9, 14, 9, 12),
+        {'bundles': [{'expire_date': datetime.datetime(2023, 3, 9, 14, 9, 12),
            'remaining_searches': 7892,
-           'start_date': datetime.datetime(2017, 3, 10, 14, 9, 12)},
+           'start_date': datetime.datetime(2021, 3, 10, 14, 9, 12)},
           {'expire_date': datetime.datetime(2019, 3, 23, 9, 52, 46),
            'remaining_searches': 50000,
-           'start_date': datetime.datetime(2017, 3, 24, 9, 52, 45)}],
+           'start_date': datetime.datetime(2021, 3, 24, 9, 52, 45)}],
          'total_remaining_searches': 57892}
 
     Getting an image count:

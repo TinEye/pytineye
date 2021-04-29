@@ -5,7 +5,7 @@ exceptions.py
 
 Exception class for pytineye.
 
-Copyright (c) 2017 TinEye. All rights reserved worldwide.
+Copyright (c) 2021 TinEye. All rights reserved worldwide.
 """
 
 

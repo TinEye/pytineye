@@ -6,22 +6,21 @@ api_request.py
 Provides authentication with the TinEye API server.
 For more information see https://services.tineye.com/developers/tineyeapi/authentication.html
 
-Copyright (c) 2017 TinEye. All rights reserved worldwide.
+Copyright (c) 2021 TinEye. All rights reserved worldwide.
 """
 
-from future.standard_library import install_aliases
-
-install_aliases()
-
+from hashlib import sha256 as sha
 import hmac
-import email.generator
+import sys
 import time
 import urllib.parse
 
-from hashlib import sha256 as sha
-
 from Crypto.Random import random
+from future.standard_library import install_aliases
+
 from .exceptions import APIRequestError
+
+install_aliases()
 
 
 class APIRequest(object):
@@ -39,7 +38,22 @@ class APIRequest(object):
         self.public_key = public_key
         self.private_key = private_key
 
-    def _generate_nonce(self, nonce_length=24):
+    @staticmethod
+    def _generate_boundary():
+        """
+        Generate a boundary string for a multipart request.
+        Adapted from Python's email.generator._make_boundary() method.
+
+        Returns: a boundary string.
+        """
+        width = len(repr(sys.maxsize - 1))
+        fmt = "%%0%dd" % width
+        token = random.randrange(sys.maxsize)
+        boundary = ("-" * 15) + (fmt % token) + "--"
+        return boundary
+
+    @staticmethod
+    def _generate_nonce(nonce_length=24):
         """
         Generate a nonce used to make a request unique.
 
@@ -65,12 +79,12 @@ class APIRequest(object):
         nonce = ""
         nonce = [
             rand.choice(APIRequest.nonce_allowable_chars)
-            for i in range(0, nonce_length)
+            for _ in range(0, nonce_length)
         ]
 
         return "".join(nonce)
 
-    def _generate_get_hmac_signature(self, method, nonce, date, request_params={}):
+    def _generate_get_hmac_signature(self, method, nonce, date, request_params=None):
         """
         Generate the HMAC signature hash for a GET request.
 
@@ -81,6 +95,10 @@ class APIRequest(object):
 
         Returns: an HMAC signature hash.
         """
+
+        if request_params is None:
+            request_params = {}
+
         http_verb = "GET"
 
         param_str = self._sort_params(request_params=request_params)
@@ -92,7 +110,7 @@ class APIRequest(object):
         return self._generate_hmac_signature(to_sign)
 
     def _generate_post_hmac_signature(
-        self, method, boundary, nonce, date, filename, request_params={}
+        self, method, boundary, nonce, date, filename, request_params=None
     ):
         """
         Generate the HMAC signature hash for a POST request.
@@ -106,6 +124,9 @@ class APIRequest(object):
 
         Returns: an HMAC signature hash.
         """
+
+        if request_params is None:
+            request_params = {}
 
         http_verb = "POST"
         content_type = "multipart/form-data; boundary=%s" % boundary
@@ -170,7 +191,7 @@ class APIRequest(object):
                 # Assume URL with % was already urlencoded
                 if param.lower() == "image_url":
                     value = request_params[param]
-                    if type(value) is bytes:
+                    if isinstance(value, bytes):
                         value = value.decode("utf-8")
                     # Lowercase and encode the URL if needed
                     url_escape = urllib.parse.quote_plus(value, "~")
@@ -227,7 +248,7 @@ class APIRequest(object):
 
         return request_url
 
-    def get_request(self, method, request_params={}):
+    def get_request(self, method, request_params=None):
         """
         Generate an API GET request string.
 
@@ -236,8 +257,12 @@ class APIRequest(object):
 
         Returns: a URL to send the search request to including the search parameters.
         """
+
+        if request_params is None:
+            request_params = {}
+
         # Have to generate a nonce and date to use in generating a GET request signature
-        nonce = self._generate_nonce()
+        nonce = APIRequest._generate_nonce()
         date = int(time.time())
 
         api_signature = self._generate_get_hmac_signature(
@@ -246,7 +271,7 @@ class APIRequest(object):
 
         return self._request_url(method, nonce, date, api_signature, request_params)
 
-    def post_request(self, method, filename, request_params={}):
+    def post_request(self, method, filename, request_params=None):
         """
         Generate an API POST request string for an image upload search.
 
@@ -262,12 +287,16 @@ class APIRequest(object):
         - `request_url`, the URL to send the search to.
         - `boundary`, the boundary to be used in the POST request.
         """
+
+        if request_params is None:
+            request_params = {}
+
         if filename is None or not len(str(filename).strip()):
             raise APIRequestError("Must specify an image to search for.")
 
         # Have to generate a boundary, nonce, and date to use in generating a POST
         # request signature
-        boundary = email.generator._make_boundary()
+        boundary = APIRequest._generate_boundary()
         nonce = self._generate_nonce()
         date = int(time.time())
 
