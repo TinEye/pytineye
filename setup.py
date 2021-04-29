@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 
-version = "2.0.0"
+version = "2.0.1"
 
 setup(
     name="pytineye",
@@ -24,7 +24,7 @@ setup(
     tests_require=["nose"],
     install_requires=[
         "future==0.18.2",
-        "pycryptodome==3.9.9",
-        "urllib3[secure]==1.26.1",
+        "pycryptodome==3.10.1",
+        "urllib3[secure]==1.26.4",
     ],
 )
