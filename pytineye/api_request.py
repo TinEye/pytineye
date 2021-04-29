@@ -6,7 +6,7 @@ api_request.py
 Provides authentication with the TinEye API server.
 For more information see https://services.tineye.com/developers/tineyeapi/authentication.html
 
-Copyright (c) 2017 TinEye. All rights reserved worldwide.
+Copyright (c) 2021 TinEye. All rights reserved worldwide.
 """
 
 from future.standard_library import install_aliases
@@ -266,8 +266,8 @@ class APIRequest(object):
             raise APIRequestError("Must specify an image to search for.")
 
         # Have to generate a boundary, nonce, and date to use in generating a POST
-        # request signature
-        boundary = email.generator._make_boundary()
+        # request signature, also needs to have starting --
+        boundary = email.generator._make_boundary().replace("=", "-")
         nonce = self._generate_nonce()
         date = int(time.time())
 
