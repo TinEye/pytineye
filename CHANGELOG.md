@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.0.1
+-----
+* Modifying boundary string so it starts and ends with `--` for multipart requests.
+
 2.0.0
 -----
 * Fixed a bug in the construction of the string to sign.
