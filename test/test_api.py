@@ -8,11 +8,10 @@ Test TinEyeAPIRequest class.
 Copyright (c) 2021 TinEye. All rights reserved worldwide.
 """
 
-from datetime import datetime
 import unittest
+from datetime import datetime
 
-from pytineye.api import Backlink, Match, TinEyeResponse
-from pytineye.api import TinEyeAPIRequest
+from pytineye.api import Backlink, Match, TinEyeAPIRequest, TinEyeResponse
 
 
 class TestTinEyeAPIRequest(unittest.TestCase):
@@ -21,12 +20,8 @@ class TestTinEyeAPIRequest(unittest.TestCase):
     def setUp(self):
         self.api = TinEyeAPIRequest(
             api_url="https://api.tineye.com/rest/",
-            public_key="LCkn,2K7osVwkX95K4Oy",
-            private_key="6mm60lsCNIB,FwOWjJqA80QZHh9BMwc-ber4u=t^",
+            api_key="LCkn,2K7osVwkX95K4Oy",
         )
-
-    def tearDown(self):
-        pass
 
     def test_backlink(self):
         """ Test TinEyeAPI.Backlink object. """
