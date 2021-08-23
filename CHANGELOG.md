@@ -1,6 +1,10 @@
 Changelog
 =========
 
+3.0.0
+-----
+* Swapping HMAC-SHA256 authentication with header key
+
 2.0.1
 -----
 * Modifying boundary string so it starts and ends with `--` for multipart requests.

@@ -8,16 +8,20 @@ Python library to ease communication with the TinEye API server.
 Copyright (c) 2021 TinEye. All rights reserved worldwide.
 """
 
-from datetime import datetime
 import http.client
 import json
 import time
-
-from .api_request import APIRequest
-from .exceptions import TinEyeAPIError
+from datetime import datetime
 
 import certifi
 import urllib3
+
+from .exceptions import TinEyeAPIError
+
+try:
+    from urllib.parse import urljoin
+except ImportError:
+    from urlparse import urljoin
 
 
 class TinEyeResponse(object):
@@ -101,7 +105,7 @@ class Match(object):
         width,
         height,
         size,
-        format,
+        image_format,
         filesize,
         overlay,
         tags=None,
@@ -113,7 +117,7 @@ class Match(object):
         self.width = width
         self.height = height
         self.size = size
-        self.format = format
+        self.format = image_format
         self.filesize = filesize
         self.overlay = overlay
         self.backlinks = backlinks
@@ -156,7 +160,7 @@ class Match(object):
             width=match_json.get("width"),
             height=match_json.get("height"),
             size=match_json.get("size"),
-            format=match_json.get("format"),
+            image_format=match_json.get("format"),
             filesize=match_json.get("filesize"),
             overlay=match_json.get("overlay"),
             tags=match_json.get("tags"),
@@ -222,13 +226,12 @@ class TinEyeAPIRequest(object):
 
         >>> from pytineye import TinEyeAPIRequest
         >>> api = TinEyeAPIRequest(
-        ...     'https://api.tineye.com/rest/',
-        ...     'your_public_key',
-        ...     'your_private_key')
+        ...     api_url='https://api.tineye.com/rest/',
+        ...     api_key='your_api_key')
 
     Searching for an image using an image URL:
 
-        >>> api.search_url(url='http://tineye.com/images/meloncat.jpg')
+        >>> api.search_url(url='https://tineye.com/images/meloncat.jpg')
         TinEyeResponse(...)
 
     Searching for an image using image data:
@@ -253,21 +256,24 @@ class TinEyeAPIRequest(object):
     Getting an image count:
 
         >>> api.image_count()
-        22117595538
+        48560880094
 
     """
 
     def __init__(
-        self, api_url="https://api.tineye.com/rest/", public_key="", private_key=""
+        self,
+        api_url="https://api.tineye.com/rest/",
+        api_key="",
     ):
         self.http_pool = urllib3.PoolManager(
             cert_reqs="CERT_REQUIRED",
             ca_certs=certifi.where(),
             timeout=urllib3.Timeout(connect=15.0, read=60.0),
         )
-        self.request = APIRequest(api_url, public_key, private_key)
+        self.api_url = api_url
+        self.api_key = api_key
 
-    def _request(self, method, params=None, image_file=None, **kwargs):
+    def _request(self, method, params=None, **kwargs):
         """
         Send request to API and process results.
 
@@ -283,24 +289,24 @@ class TinEyeAPIRequest(object):
             params = {}
         params.update(kwargs)
 
+        headers = {"x-api-key": self.api_key}
+        api_url_search = urljoin(self.api_url, "/rest/%s/" % method)
+
         try:
             obj = None
             response = None
 
             # If an image file was provided, send a POST request, else send a GET request
-            if image_file is None:
-                request_string = self.request.get_request(method, params)
-                response = self.http_pool.request("GET", request_string)
-            else:
-                filename = image_file[0]
-                request_string, boundary = self.request.post_request(
-                    method, filename, params
+            if "image_upload" not in params:
+                response = self.http_pool.request(
+                    method="GET", url=api_url_search, fields=params, headers=headers
                 )
+            else:
                 response = self.http_pool.request_encode_body(
-                    "POST",
-                    request_string,
-                    fields={"image_upload": image_file},
-                    multipart_boundary=boundary,
+                    method="POST",
+                    url=api_url_search,
+                    fields=params,
+                    headers=headers,
                 )
             # Parse the JSON into a Python object
             obj = json.loads(response.data.decode("utf-8"))
@@ -338,7 +344,6 @@ class TinEyeAPIRequest(object):
             "sort": sort,
             "order": order,
         }
-
         obj = self._request("search", params, **kwargs)
 
         return TinEyeResponse._from_dict(obj)
@@ -360,10 +365,14 @@ class TinEyeAPIRequest(object):
         Returns: a TinEye Response object.
         """
 
-        params = {"offset": offset, "limit": limit, "sort": sort, "order": order}
-
-        image_file = ("image.jpg", data)
-        obj = self._request("search", params=params, image_file=image_file, **kwargs)
+        params = {
+            "image_upload": ("image.jpg", data),
+            "offset": offset,
+            "limit": limit,
+            "sort": sort,
+            "order": order,
+        }
+        obj = self._request("search", params=params, **kwargs)
 
         return TinEyeResponse._from_dict(obj)
 

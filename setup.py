@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 
-version = "2.0.1"
+version = "3.0.0"
 
 setup(
     name="pytineye",
@@ -10,8 +10,11 @@ setup(
     classifiers=[
         "Intended Audience :: Developers",
         "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
     keywords=["tineye", "api", "reverse image search"],
     author="TinEye",
@@ -24,7 +27,7 @@ setup(
     tests_require=["nose"],
     install_requires=[
         "future==0.18.2",
-        "pycryptodome==3.10.1",
-        "urllib3[secure]==1.26.4",
+        "urllib3==1.26.6",
+        "certifi==2021.5.30",
     ],
 )
