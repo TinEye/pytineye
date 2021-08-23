@@ -27,6 +27,7 @@ setup(
     tests_require=["nose"],
     install_requires=[
         "future==0.18.2",
-        "urllib3[secure]==1.26.6",
+        "urllib3==1.26.6",
+        "certifi==2021.5.30",
     ],
 )

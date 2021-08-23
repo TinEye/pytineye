@@ -20,7 +20,7 @@ class TestTinEyeAPIRequest(unittest.TestCase):
     def setUp(self):
         self.api = TinEyeAPIRequest(
             api_url="https://api.tineye.com/rest/",
-            api_key="LCkn,2K7osVwkX95K4Oy",
+            api_key="6mm60lsCNIB,FwOWjJqA80QZHh9BMwc-ber4u=t^",
         )
 
     def test_backlink(self):

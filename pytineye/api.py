@@ -226,7 +226,7 @@ class TinEyeAPIRequest(object):
 
         >>> from pytineye import TinEyeAPIRequest
         >>> api = TinEyeAPIRequest(
-        ...     url='https://api.tineye.com/rest/',
+        ...     api_url='https://api.tineye.com/rest/',
         ...     api_key='your_api_key')
 
     Searching for an image using an image URL:
