@@ -27,7 +27,6 @@ setup(
     tests_require=["nose"],
     install_requires=[
         "future==0.18.2",
-        "pycryptodome==3.10.1",
         "urllib3[secure]==1.26.6",
     ],
 )
