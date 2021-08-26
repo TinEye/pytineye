@@ -1,28 +1,25 @@
-TinEye API Python client
-========================
+# pytineye
 
-**pytineye** is a Python client library for the TinEye API. The TinEye API
-is a TinEye paid search alternative for professional, commercial or high-volume users.
+**pytineye** is the official Python client library for the TinEye API. The TinEye API
+is TinEye's paid search alternative for professional, commercial or high-volume users.
 See <https://api.tineye.com/> for more information.
 
-Installation
-------------
+# Contents
 
-Download the latest version of the library and install with pip:
+- [ Installation ](#installation)
+- [ Migrating from previous versions ](#migrating-from-previous-versions)
+- [ Documentation ](#documentation)
+- [ Support ](#support)
 
-    $ wget https://github.com/TinEye/pytineye/archive/main.zip --output-document=pytineye.zip
-    $ pip install pytineye.zip
+# Installation
 
-If you do not have pip, you can install it first:
+Install the latest version of the library using pip:
 
-    $ curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py | python
+```bash
+$ python -m pip install pytineye
+```
 
-Or you can install from the zip file:
-
-    $ python setup.py install
-
-Migrating from previous versions
---------------------------------
+# Migrating from previous versions
 
 If you were using any version of **pytineye** before `3.0.0`, you will need
 to make minor changes to your code.
@@ -31,7 +28,7 @@ The API object is now instantiated using a single key, `api_key`. The value
 of this key is the same as your previous `private_key`. The public key is no 
 longer used.
 
-#### New ✅ 
+#### New ✅
 ```python
 # Sandbox key
 # Note that this is the same value as the old private_key
@@ -54,12 +51,10 @@ api = TinEyeAPIRequest(
 )
 ```
 
-Documentation
--------------
+# Documentation
 
 View [documentation](https://api.tineye.com/python/docs/).
 
-Support
--------
+# Support
 
 Please send comments, recommendations, and bug reports to <support@tineye.com>.
