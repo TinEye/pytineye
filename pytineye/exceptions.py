@@ -10,7 +10,7 @@ Copyright (c) 2021 TinEye. All rights reserved worldwide.
 
 
 class TinEyeAPIError(Exception):
-    """ Base exception. """
+    """Base exception."""
 
     def __init__(self, code, message):
         self.code = code
@@ -29,6 +29,6 @@ class TinEyeAPIError(Exception):
 
 
 class APIRequestError(Exception):
-    """ Base exception for APIRequest. """
+    """Base exception for APIRequest."""
 
     pass
