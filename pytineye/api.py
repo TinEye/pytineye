@@ -89,7 +89,7 @@ class Match(object):
     - `width`, image width in pixels.
     - `height`, image height in pixels.
     - `size`, image area in pixels.
-    - `format`, image format.
+    - `image_format`, image format.
     - `filesize`, image size in bytes.
     - `overlay`, overlay URL.
     - `backlinks`, a list of Backlink objects pointing to
