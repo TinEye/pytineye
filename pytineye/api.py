@@ -265,11 +265,13 @@ class TinEyeAPIRequest(object):
         self,
         api_url="https://api.tineye.com/rest/",
         api_key="",
+        connect_timeout=15.0,
+        read_timeout=60.0,
     ):
         self.http_pool = urllib3.PoolManager(
             cert_reqs="CERT_REQUIRED",
             ca_certs=certifi.where(),
-            timeout=urllib3.Timeout(connect=15.0, read=60.0),
+            timeout=urllib3.Timeout(connect=connect_timeout, read=read_timeout),
         )
         self.api_url = api_url
         self.api_key = api_key
