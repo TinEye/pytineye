@@ -1,6 +1,10 @@
 Changelog
 =========
 
+3.1.0
+-----
+* Add read_timeout and connect_timeout to TinEyeAPIRequest
+
 3.0.0
 -----
 * Swapping HMAC-SHA256 authentication with header key
