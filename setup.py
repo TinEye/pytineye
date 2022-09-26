@@ -2,7 +2,7 @@ from os import path
 
 from setuptools import find_packages, setup
 
-version = "3.0.0"
+version = "3.1.0"
 
 
 # read the contents of your README file

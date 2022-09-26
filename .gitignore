@@ -5,3 +5,4 @@ pytineye.egg-info/
 env
 .env
 .vscode
+docs/_build

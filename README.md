@@ -6,10 +6,15 @@ See <https://api.tineye.com/> for more information.
 
 # Contents
 
-- [ Installation ](#installation)
-- [ Migrating from previous versions ](#migrating-from-previous-versions)
-- [ Documentation ](#documentation)
-- [ Support ](#support)
+- [pytineye](#pytineye)
+- [Contents](#contents)
+- [Installation](#installation)
+- [Migrating from previous versions](#migrating-from-previous-versions)
+      - [New ✅](#new-)
+      - [Old ❌](#old-)
+- [Documentation](#documentation)
+  - [Building the documentation](#building-the-documentation)
+- [Support](#support)
 
 # Installation
 
@@ -54,6 +59,20 @@ api = TinEyeAPIRequest(
 # Documentation
 
 View [documentation](https://api.tineye.com/python/docs/).
+
+## Building the documentation
+
+To build the documentation 
+
+Install [sphinx](https://pypi.org/project/Sphinx/)
+```
+pip install sphinx
+```
+
+Run the sphinx-build command
+```
+sphinx-build docs/ docs/_build
+```
 
 # Support
 
