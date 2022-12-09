@@ -38,7 +38,7 @@ setup(
     install_requires=[
         "future==0.18.2",
         "urllib3==1.26.6",
-        "certifi==2021.5.30",
+        "certifi==2022.12.7",
     ],
     include_package_data=True,
     zip_safe=False,
