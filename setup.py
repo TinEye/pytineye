@@ -37,8 +37,8 @@ setup(
     packages=find_packages(exclude=["ez_setup", "examples", "tests"]),
     install_requires=[
         "future==0.18.2",
-        "urllib3==1.26.6",
-        "certifi==2021.5.30",
+        "urllib3>=1.26.6",
+        "certifi>=2021.5.30",
     ],
     include_package_data=True,
     zip_safe=False,
